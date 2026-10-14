@@ -11,6 +11,7 @@ services:
       - php
     networks:
       - pg-network
+      
   
   db:
     build:
