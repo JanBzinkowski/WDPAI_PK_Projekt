@@ -7,12 +7,11 @@ services:
       - "${APP_PORT:-8080}:80"
     volumes:
       - .:/app/
-    links:
+    depends_on:
       - php
     networks:
       - pg-network
-      
-  
+
   db:
     build:
       context: .
@@ -20,23 +19,34 @@ services:
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-wdpai}
+      POSTGRES_USER: ${POSTGRES_USER:-wdpai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wdpai}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-wdpai} -d $${POSTGRES_DB:-wdpai}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - pg-network
     volumes:
       - ./docker/db:/docker-entrypoint-initdb.d
-  
+      - pg-data:/var/lib/postgresql/data
+
   php:
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     volumes:
       - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
     networks:
       - pg-network
-  
+
   # ollama:
   #   image: ollama/ollama:latest
   #   gpus: all
@@ -58,13 +68,16 @@ services:
     image: dpage/pgadmin4:latest
     container_name: ${PGADMIN_CONTAINER_NAME:-pg-admin}
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@wdpai.local}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
     ports:
       - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
       - pg-network
-  
+
 networks:
   pg-network:
 
