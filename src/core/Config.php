@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace App\Core;
+
 final readonly class Config
 {
     public function get(string $key, ?string $default = null): string

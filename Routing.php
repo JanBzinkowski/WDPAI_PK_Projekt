@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Controller\AppController;
+
 final class Routing
 {
     private array $routes = [];

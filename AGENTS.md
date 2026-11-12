@@ -17,7 +17,7 @@ Po każdej zmianie w projekcie MUSISZ zaktualizować AGENTS.md:
 5. Dodałeś zmienną środowiskową                        -> dopisz ją do "Zmienne środowiskowe" ORAZ do .env.example.
 6. Dodałeś klucz tłumaczenia / nową usługę / komendę   -> zaktualizuj odpowiednią sekcję.
 7. Proponując commit                                   -> użyj formatu z sekcji "Konwencja commitów"
-                                                         ([NR TASKA] prefiks: opis).
+                                                         (prefiks: opis).
 Nie usuwaj cudzych wpisów. Wpisy dopisuj w formacie istniejących tabel. Data w formacie DD-MM-RRRR.
 ```
 
@@ -70,15 +70,16 @@ my-app/
 ├── README.md                     # dokumentacja (wymagania z kryterium 1)
 ├── .gitignore
 ├── .env.example                  # wzór zmiennych środowiskowych
+├── composer.json                 # konfiguracja Composer (PSR-4 App\ -> src/, PHPMailer, PHPUnit)
 ├── docker-compose.yaml           # usługi: server, php, db, mailpit, pgadmin-wdpai
 ├── Routing.php                   # klasa Routing: GET/POST, wzorce, parametry {id} (\d+)
 ├── docker/
 │   ├── db/Dockerfile             # postgres:16-alpine; katalog montowany jako initdb.d
 │   ├── nginx/Dockerfile          # nginx:stable-alpine
 │   ├── nginx/nginx.conf          # root /app/public, fastcgi -> php:9000
-│   └── php/Dockerfile            # php:8.3-fpm-alpine + pdo_pgsql, gd, zip, opcache, composer
+│   └── php/Dockerfile            # php:8.3-fpm-alpine + pdo_pgsql, gd, zip, opcache, composer + instalacja zależności
 ├── public/                       # document root
-│   ├── index.php                 # punkt wejścia: rejestracja tras + dispatch
+│   ├── index.php                 # punkt wejścia: vendor/autoload.php + rejestracja tras + dispatch
 │   └── views/
 │       ├── home.html.php
 │       ├── not-found.html.php
@@ -86,11 +87,11 @@ my-app/
 │       └── projects.html.php
 └── src/
     ├── controllers/
-    │   ├── AppController.php     # abstrakcyjny kontroler bazowy, render()
-    │   ├── DefaultController.php # index, notFound
-    │   └── ProjectController.php # index, show(int $id)
+    │   ├── AppController.php     # App\Controller\AppController: abstrakcyjny kontroler bazowy, render()
+    │   ├── DefaultController.php # App\Controller\DefaultController: index, notFound
+    │   └── ProjectController.php # App\Controller\ProjectController: index, show(int $id)
     └── core/
-        └── Config.php            # final readonly Config: typowane gettery z getenv()
+        └── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
 ```
 
 Docelowe katalogi (tworzyć zgodnie z tym układem):
@@ -156,10 +157,10 @@ docker compose up --build
 Format komunikatu:
 
 ```text
-[EWENTUALNY NR TASKA] prefiks: krótki opis w trybie rozkazującym (po angielsku)
+prefiks: krótki opis w trybie rozkazującym (po angielsku)
 ```
 
-Przykłady: `[12] feat: add registration form`, `fix: validate empty email`.
+Przykłady: `feat: add registration form`, `fix: validate empty email`.
 
 | Prefiks    | Zastosowanie      | Przykład                            |
 |------------|-------------------|-------------------------------------|
@@ -170,16 +171,16 @@ Przykłady: `[12] feat: add registration form`, `fix: validate empty email`.
 | `test`     | Testy             | `test: cover login validation`      |
 | `chore`    | Konfiguracja      | `chore: configure nginx`            |
 
-Zasady: nr taska w nawiasach kwadratowych tylko, jeśli istnieje; opis małą literą, bez kropki na końcu, maks. ~72 znaki; aktualizacja AGENTS.md wchodzi w ten sam commit co zmiana, której dotyczy.
+Zasady: opis małą literą, bez kropki na końcu, maks. ~72 znaki; aktualizacja AGENTS.md wchodzi w ten sam commit co zmiana, której dotyczy.
 
 ## 9. Znane problemy (do naprawy)
 
-- ~~`docker-compose.yaml` odwołuje się do `docker/nginx/Dockerfile` i `docker/php/Dockerfile`, a pliki nazywają się `dockerfile` (małą literą) — na Linuksie/czystym środowisku build się nie powiedzie.~~ _(naprawione w KAN-19)_
-- ~~Wolumen `pg-data` jest zadeklarowany, ale nieużywany przez `db` (dane nie są utrwalane) — dodać `pg-data:/var/lib/postgresql/data`.~~ _(naprawione w KAN-19)_
-- ~~`links:` jest przestarzałe — zastąpić `depends_on`.~~ _(naprawione w KAN-19)_
-- ~~Brak `.env.example`.~~ _(naprawione w KAN-20)_
+- ~~`docker-compose.yaml` odwołuje się do `docker/nginx/Dockerfile` i `docker/php/Dockerfile`, a pliki nazywają się `dockerfile` (małą literą) — na Linuksie/czystym środowisku build się nie powiedzie.~~ _(naprawione)_
+- ~~Wolumen `pg-data` jest zadeklarowany, ale nieużywany przez `db` (dane nie są utrwalane) — dodać `pg-data:/var/lib/postgresql/data`.~~ _(naprawione)_
+- ~~`links:` jest przestarzałe — zastąpić `depends_on`.~~ _(naprawione)_
+- ~~Brak `.env.example`.~~ _(naprawione)_
 - Komentarze w `Routing.php` i `index.php` mają uszkodzone kodowanie (zapisać jako UTF-8).
-- Ładowanie klas przez `require_once` — rozważyć autoloader Composer (PSR-4).
+- ~~Ładowanie klas przez `require_once` — rozważyć autoloader Composer (PSR-4).~~ _(naprawione)_
 
 ## 10. Checklista kryteriów oceny
 
@@ -188,10 +189,10 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | Nr | Kryterium | Status | Gdzie / uwagi |
 |----|-----------|--------|---------------|
 | 1 | README.md (opis, uruchomienie, demo, zrzuty, przepływ, architektura, ERD, testy, link) | ⬜ | |
-| 2 | Docker (`docker compose up --build`, nazwy usług, wolumen, opis portów/zmiennych) | 🟨 | `docker-compose.yaml` naprawiony (KAN-19); brak opisu w `README.md` |
+| 2 | Docker (`docker compose up --build`, nazwy usług, wolumen, opis portów/zmiennych) | 🟨 | `docker-compose.yaml` naprawiony; brak opisu w `README.md` |
 | 3 | Architektura (warstwy, diagram w README) | 🟨 | są kontrolery i widoki |
 | 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | 🟨 | brak query param i 400 |
-| 5 | **Obiektowy backend** (warunek konieczny) | 🟨 | |
+| 5 | **Obiektowy backend** (warunek konieczny) | 🟨 | PSR-4 autoloader Composer (`App\` -> `src/`), przestrzenie nazw `App\Controller`, `App\Core` |
 | 6 | ERD Mermaid w README | ⬜ | |
 | 7 | Git (małe commity, merge do main) | 🟨 | |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
@@ -199,7 +200,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | ⬜ | |
 | 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ⬜ | |
 | 12 | Eksport `.sql` | ⬜ | |
-| 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, strict_types |
+| 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, `strict_types`, Composer PSR-4 autoloader |
 | 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | ⬜ | |
 | 15 | Fetch API (GET + POST, JSON, statusy, loading) | ⬜ | |
 | 16 | Design (spójny, CSS w plikach) | ⬜ | |
@@ -217,11 +218,11 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 28 | Brak replikacji kodu | 🟨 | |
 | 29 | Czystość kodu | 🟨 | |
 | 30 | Tłumaczenia PL/EN (także walidacja/błędy) | ⬜ | |
-| 31 | Testy jednostkowe (+ polecenie uruchomienia) | ⬜ | |
+| 31 | Testy jednostkowe (+ polecenie uruchomienia) | ⬜ | zależność `phpunit/phpunit` dodana w `composer.json` |
 | 32 | CRON (harmonogram, log, idempotencja) | ⬜ | |
-| 33 | PHPMailer / SMTP (Mailpit lokalnie) | ⬜ | usługa mailpit istnieje |
+| 33 | PHPMailer / SMTP (Mailpit lokalnie) | ⬜ | usługa mailpit istnieje; zależność `phpmailer/phpmailer` w `composer.json` |
 | 34 | Upload zdjęcia (rozmiar, MIME, rozszerzenie, unikalna nazwa, ścieżka w DB) | ⬜ | |
-| 35 | `.env` + `.env.example` | ✅ | `.env` w `.gitignore`, utworzono `.env.example` i `src/core/Config.php` (KAN-20) |
+| 35 | `.env` + `.env.example` | ✅ | `.env` w `.gitignore`, utworzono `.env.example` i `src/core/Config.php` |
 | 36 | Deploy (publiczny URL w README) | ⬜ | |
 
 ## 11. Rejestr zaimplementowanych funkcjonalności
@@ -234,7 +235,8 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 2026-11-11 | Router obiektowy (GET/POST, parametry `{id}`) + fallback 404 | `Routing.php`, `public/index.php` | 4, 5 | — |
 | 2026-11-11 | Kontrolery bazowe i widoki (home, projects, project, not-found) | `src/controllers/*`, `public/views/*` | 3, 5 | — |
 | 2026-11-11 | Utworzenie AGENTS.md | `AGENTS.md` | 29 | AI agent |
-| 12-11-2026 | [KAN-19] Naprawa `docker-compose.yaml` (wielkość liter `Dockerfile`, `depends_on` z `pg_isready`, wolumen `pg-data`) | `docker-compose.yaml`, `docker/nginx/Dockerfile`, `docker/php/Dockerfile` | 2 | Antigravity |
+| 12-11-2026 | Naprawa `docker-compose.yaml` (wielkość liter `Dockerfile`, `depends_on` z `pg_isready`, wolumen `pg-data`) | `docker-compose.yaml`, `docker/nginx/Dockerfile`, `docker/php/Dockerfile` | 2 | Antigravity |
 | 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 | AI agent |
-| 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 | AI agent |
-| 12-11-2026 | [KAN-20] Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 | Antigravity |
+| 12-11-2026 | Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 | Antigravity |
+| 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 | Antigravity |
+| 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 | Antigravity |
