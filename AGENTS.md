@@ -69,7 +69,7 @@ my-app/
 ├── SKILLS.md                     # indeks i opis skilli oraz procedur technicznych
 ├── README.md                     # dokumentacja (wymagania z kryterium 1)
 ├── .gitignore
-├── .env.example                  # (planowane) wzór zmiennych środowiskowych
+├── .env.example                  # wzór zmiennych środowiskowych
 ├── docker-compose.yaml           # usługi: server, php, db, mailpit, pgadmin-wdpai
 ├── Routing.php                   # klasa Routing: GET/POST, wzorce, parametry {id} (\d+)
 ├── docker/
@@ -85,10 +85,12 @@ my-app/
 │       ├── project.html.php
 │       └── projects.html.php
 └── src/
-    └── controllers/
-        ├── AppController.php     # abstrakcyjny kontroler bazowy, render()
-        ├── DefaultController.php # index, notFound
-        └── ProjectController.php # index, show(int $id)
+    ├── controllers/
+    │   ├── AppController.php     # abstrakcyjny kontroler bazowy, render()
+    │   ├── DefaultController.php # index, notFound
+    │   └── ProjectController.php # index, show(int $id)
+    └── core/
+        └── Config.php            # final readonly Config: typowane gettery z getenv()
 ```
 
 Docelowe katalogi (tworzyć zgodnie z tym układem):
@@ -124,8 +126,10 @@ docker compose up --build
 
 | Zmienna | Opis |
 |---------|------|
-| `APP_PORT` | port aplikacji |
-| `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT` | baza danych |
+| `APP_ENV`, `APP_DEBUG`, `APP_URL`, `APP_TIMEZONE`, `APP_PORT` | konfiguracja środowiska aplikacji, URL, strefa czasowa i port HTTP |
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` | połączenie PDO z bazą danych PostgreSQL w PHP |
+| `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_PORT` | kontener bazy danych PostgreSQL |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_ENCRYPTION`, `SMTP_FROM_EMAIL`, `SMTP_FROM_NAME` | konfiguracja wysyłki e-mail (SMTP / Mailpit) |
 | `PGADMIN_DEFAULT_EMAIL`, `PGADMIN_DEFAULT_PASSWORD`, `PGADMIN_PORT`, `PGADMIN_CONTAINER_NAME` | pgAdmin |
 | `MAILPIT_PORT` | UI Mailpit |
 
@@ -173,7 +177,7 @@ Zasady: nr taska w nawiasach kwadratowych tylko, jeśli istnieje; opis małą li
 - ~~`docker-compose.yaml` odwołuje się do `docker/nginx/Dockerfile` i `docker/php/Dockerfile`, a pliki nazywają się `dockerfile` (małą literą) — na Linuksie/czystym środowisku build się nie powiedzie.~~ _(naprawione w KAN-19)_
 - ~~Wolumen `pg-data` jest zadeklarowany, ale nieużywany przez `db` (dane nie są utrwalane) — dodać `pg-data:/var/lib/postgresql/data`.~~ _(naprawione w KAN-19)_
 - ~~`links:` jest przestarzałe — zastąpić `depends_on`.~~ _(naprawione w KAN-19)_
-- Brak `.env.example`.
+- ~~Brak `.env.example`.~~ _(naprawione w KAN-20)_
 - Komentarze w `Routing.php` i `index.php` mają uszkodzone kodowanie (zapisać jako UTF-8).
 - Ładowanie klas przez `require_once` — rozważyć autoloader Composer (PSR-4).
 
@@ -217,7 +221,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 32 | CRON (harmonogram, log, idempotencja) | ⬜ | |
 | 33 | PHPMailer / SMTP (Mailpit lokalnie) | ⬜ | usługa mailpit istnieje |
 | 34 | Upload zdjęcia (rozmiar, MIME, rozszerzenie, unikalna nazwa, ścieżka w DB) | ⬜ | |
-| 35 | `.env` + `.env.example` | 🟨 | `.env` w .gitignore, brak example |
+| 35 | `.env` + `.env.example` | ✅ | `.env` w `.gitignore`, utworzono `.env.example` i `src/core/Config.php` (KAN-20) |
 | 36 | Deploy (publiczny URL w README) | ⬜ | |
 
 ## 11. Rejestr zaimplementowanych funkcjonalności
@@ -233,3 +237,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 12-11-2026 | [KAN-19] Naprawa `docker-compose.yaml` (wielkość liter `Dockerfile`, `depends_on` z `pg_isready`, wolumen `pg-data`) | `docker-compose.yaml`, `docker/nginx/Dockerfile`, `docker/php/Dockerfile` | 2 | Antigravity |
 | 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 | AI agent |
 | 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 | AI agent |
+| 12-11-2026 | [KAN-20] Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 | Antigravity |
