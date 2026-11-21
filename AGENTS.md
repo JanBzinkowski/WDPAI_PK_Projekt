@@ -155,10 +155,20 @@ docker compose up --build
 
 ## 7. Baza danych
 
-- Schemat / eksport: _brak — utworzyć `database/schema.sql` (ładowany przez `docker-entrypoint-initdb.d`)._
-- Tabele: _brak_.
-- Widoki / triggery / funkcje / transakcje: _brak_.
-- Zasada: każda zmiana schematu = aktualizacja `schema.sql` + ERD (Mermaid `erDiagram`) w README.md + ta sekcja.
+- Schemat / eksport: docelowo w `database/schema.sql` (ładowany automatycznie przez `docker-entrypoint-initdb.d`).
+- Model danych (3NF):
+  * `users` — użytkownicy, hasła (hash), rola (`USER`/`ADMIN`), saldo `coins`, `gems`.
+  * `user_settings` — preferencje (cel dzienny, powiadomienia, motyw, strefa).
+  * `decks` — talie fiszek (tytuł, opis, flaga publiczna, autor).
+  * `flashcards` — pojedyncze fiszki (przód, tył, podpowiedź).
+  * `user_flashcard_progress` — postęp Leitnera per użytkownik per fiszka: `box` (1-5), `next_review_at`, `consecutive_correct`.
+  * `study_sessions` & `review_logs` — sesje i historia pojedynczych powtórek.
+  * `currency_transactions` — audytowalna księga transakcji monet i klejnotów.
+  * `daily_activity` & `daily_tests` — serie dni (streaks) i codzienne testy wiedzy.
+  * `shop_items` & `user_items` — sklep z nagrodami (awatary, odznaki, motywy) i ekwipunek.
+  * `password_resets` — tokeny bezpiecznego resetowania hasła.
+- Integralność: `CHECK (box BETWEEN 1 AND 5)`, `CHECK (coins >= 0 AND gems >= 0)`, `CHECK (daily_goal > 0)`.
+- Relacje i indeksy: `UNIQUE(user_id, flashcard_id)`, `UNIQUE(user_id, item_id)`, `UNIQUE(user_id, activity_date)`, `UNIQUE(email)`. Indeksy na `next_review_at`, `decks.is_public`, `user_id`.
 
 ## 8. Konwencje
 
@@ -212,7 +222,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 3 | Architektura (warstwy, diagram w README) | ✅ | src/Core, Controller, Service, Repository, Model, Exception; diagram Mermaid w README.md |
 | 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | ✅ | Router w src/core/Router.php: GET/POST/PUT/PATCH/DELETE, override _method, regex {id:\d+}, 404/405, middleware, testy tests/Unit/RouterTest.php |
 | 5 | **Obiektowy backend** (warunek konieczny) | ✅ | PSR-4 autoloader Composer, strict_types, podział na warstwy Controller/Service/Repository/Model/Core |
-| 6 | ERD Mermaid w README | ⬜ | |
+| 6 | ERD Mermaid w README | ✅ | Diagram ERD Mermaid w README.md (relacje 3NF, klucze, atrybuty) |
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
 | 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ⬜ | |
@@ -268,3 +278,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 | Antigravity |
 | 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 | Antigravity |
 | 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 | Antigravity |
+| 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 | Antigravity |

@@ -64,3 +64,167 @@ flowchart TD
 4. **Model/Entity** — silnie hermetyzowane obiekty domenowe i enumy.
 5. **View** — szablony `*.html.php` z obowiązkowym escapowaniem zmiennych (`e()`).
 
+---
+
+## 3. Model danych i diagram ERD (Mermaid)
+
+Model relacyjny bazy PostgreSQL 16 zaprojektowano w **trzeciej postaci normalnej (3NF)** z silnymi ograniczeniami integralności (klucze obce, unikalność, warunki `CHECK`).
+
+```mermaid
+erDiagram
+    USERS ||--o| USER_SETTINGS : "posiada"
+    USERS ||--o{ DECKS : "tworzy"
+    DECKS ||--o{ FLASHCARDS : "zawiera"
+    USERS ||--o{ USER_FLASHCARD_PROGRESS : "posiada"
+    FLASHCARDS ||--o{ USER_FLASHCARD_PROGRESS : "dotyczy"
+    USERS ||--o{ STUDY_SESSIONS : "przeprowadza"
+    DECKS ||--o{ STUDY_SESSIONS : "obejmuje"
+    STUDY_SESSIONS ||--o{ REVIEW_LOGS : "rejestruje"
+    FLASHCARDS ||--o{ REVIEW_LOGS : "ocenia"
+    USERS ||--o{ CURRENCY_TRANSACTIONS : "posiada"
+    USERS ||--o{ DAILY_ACTIVITY : "rejestruje"
+    USERS ||--o{ DAILY_TESTS : "wykonuje"
+    USERS ||--o{ USER_ITEMS : "posiada"
+    SHOP_ITEMS ||--o{ USER_ITEMS : "kataloguje"
+    USERS ||--o{ PASSWORD_RESETS : "posiada"
+
+    USERS {
+        int id PK
+        string email UK
+        string password_hash
+        string username
+        string role
+        int coins
+        int gems
+        datetime created_at
+        datetime updated_at
+    }
+
+    USER_SETTINGS {
+        int id PK
+        int user_id FK,UK
+        int daily_goal
+        boolean sound_enabled
+        string theme
+        string timezone
+        datetime updated_at
+    }
+
+    DECKS {
+        int id PK
+        int user_id FK
+        string title
+        string description
+        boolean is_public
+        int flashcard_count
+        datetime created_at
+        datetime updated_at
+    }
+
+    FLASHCARDS {
+        int id PK
+        int deck_id FK
+        string front
+        string back
+        string hint
+        datetime created_at
+        datetime updated_at
+    }
+
+    USER_FLASHCARD_PROGRESS {
+        int id PK
+        int user_id FK
+        int flashcard_id FK
+        int box
+        datetime next_review_at
+        int consecutive_correct
+        datetime last_reviewed_at
+    }
+
+    STUDY_SESSIONS {
+        int id PK
+        int user_id FK
+        int deck_id FK
+        datetime started_at
+        datetime finished_at
+        int total_reviewed
+        int correct_count
+    }
+
+    REVIEW_LOGS {
+        int id PK
+        int session_id FK
+        int user_id FK
+        int flashcard_id FK
+        int box_before
+        int box_after
+        boolean was_correct
+        datetime reviewed_at
+    }
+
+    CURRENCY_TRANSACTIONS {
+        int id PK
+        int user_id FK
+        string currency
+        int amount
+        int balance_after
+        string transaction_type
+        string description
+        datetime created_at
+    }
+
+    DAILY_ACTIVITY {
+        int id PK
+        int user_id FK
+        date activity_date
+        int reviews_count
+        boolean goal_achieved
+        int streak_days
+    }
+
+    DAILY_TESTS {
+        int id PK
+        int user_id FK
+        date test_date
+        int score
+        int total_questions
+        datetime completed_at
+    }
+
+    SHOP_ITEMS {
+        int id PK
+        string name
+        string description
+        int price_coins
+        int price_gems
+        string category
+        string image_path
+        boolean is_active
+        datetime created_at
+    }
+
+    USER_ITEMS {
+        int id PK
+        int user_id FK
+        int item_id FK
+        boolean is_equipped
+        datetime acquired_at
+    }
+
+    PASSWORD_RESETS {
+        int id PK
+        int user_id FK
+        string token_hash
+        datetime expires_at
+        datetime used_at
+        datetime created_at
+    }
+```
+
+### Ograniczenia i normalizacja (3NF):
+- **Niezależny postęp Leitnera**: `user_flashcard_progress` posiada klucz unikalny `UNIQUE(user_id, flashcard_id)` — wielu użytkowników może uczyć się tej samej talii publicznej bez konfliktów postępu.
+- **Audyt walut (monety/klejnoty)**: bieżące saldo w `users.coins` i `users.gems` jest chronione ograniczeniem `CHECK (coins >= 0 AND gems >= 0)`, a każda operacja jest rejestrowana w tabeli `currency_transactions` (księga transakcji z saldem po operacji).
+- **Warunki CHECK**: `box BETWEEN 1 AND 5`, `daily_goal > 0`, `price_coins >= 0`, `price_gems >= 0`.
+- **Kaskadowe usuwanie (ON DELETE)**: usunięcie talii usuwa jej fiszki i postęp (`CASCADE`), podczas gdy historia zakupów `user_items` zachowuje integralność (`RESTRICT`).
+
+
