@@ -6,19 +6,16 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use App\Controller\DefaultController;
 use App\Controller\ProjectController;
+use App\Core\Http\Request;
+use App\Core\Router;
 
-$routing = new Routing();
+$request = Request::createFromGlobals();
+$router = new Router();
 
-// TU BĘDZIEMY DEFINIOWAĆ WSZYSTKIE TRASY WYSTĘPUJĄCE W NASZYM PROJEKCIE
-$routing->get('/projects', ProjectController::class, 'index');
-$routing->get('/projects/{id}', ProjectController::class, 'show');
-$routing->get('/', DefaultController::class, 'index');
+// Rejestracja tras aplikacji
+$router->get('/', DefaultController::class, 'index');
+$router->get('/projects', ProjectController::class, 'index');
+$router->get('/projects/{id}', ProjectController::class, 'show');
 
-$routeFound = $routing->dispatch(
-    $_SERVER['REQUEST_METHOD'],
-    $_SERVER['REQUEST_URI'],
-);
-
-if (!$routeFound) {
-    (new DefaultController())->notFound()->send();
-}
+$response = $router->dispatch($request);
+$response->send();

@@ -92,6 +92,9 @@ my-app/
     │   └── ProjectController.php # App\Controller\ProjectController: index, show(int $id)
     └── core/
         ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
+        ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
+        ├── Middleware/           # App\Core\Middleware: MiddlewareInterface
+        │   └── MiddlewareInterface.php
         └── Http/                 # App\Core\Http: Request, Response, JsonResponse, RedirectResponse
             ├── JsonResponse.php
             ├── RedirectResponse.php
@@ -196,7 +199,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 1 | README.md (opis, uruchomienie, demo, zrzuty, przepływ, architektura, ERD, testy, link) | ⬜ | |
 | 2 | Docker (`docker compose up --build`, nazwy usług, wolumen, opis portów/zmiennych) | 🟨 | `docker-compose.yaml` naprawiony; brak opisu w `README.md` |
 | 3 | Architektura (warstwy, diagram w README) | ✅ | src/Core, Controller, Service, Repository, Model, Exception; diagram Mermaid w README.md |
-| 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | 🟨 | brak query param i 400 |
+| 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | ✅ | Router w src/core/Router.php: GET/POST/PUT/PATCH/DELETE, override _method, regex {id:\d+}, 404/405, middleware, testy tests/Unit/RouterTest.php |
 | 5 | **Obiektowy backend** (warunek konieczny) | ✅ | PSR-4 autoloader Composer, strict_types, podział na warstwy Controller/Service/Repository/Model/Core |
 | 6 | ERD Mermaid w README | ⬜ | |
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
@@ -248,3 +251,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
 | 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 | Antigravity |
 | 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 | Antigravity |
+| 21-11-2026 | Przebudowa Routera (App\Core\Router): metody GET/POST/PUT/PATCH/DELETE, override _method, parametry regex {id:\d+}, query params, obsługa 404/405, pipeline middleware i testy jednostkowe (KAN-25) | `src/core/Router.php`, `src/core/Middleware/**`, `Routing.php`, `public/index.php`, `tests/Unit/RouterTest.php`, `AGENTS.md` | 4 | Antigravity |
