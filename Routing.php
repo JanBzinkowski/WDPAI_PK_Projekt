@@ -87,7 +87,11 @@ final class Routing
                 throw new \RuntimeException('Invalid controller');
             }
 
-            $controller->{$route['action']}(...$parameters);
+            $result = $controller->{$route['action']}(...$parameters);
+
+            if ($result instanceof \App\Core\Http\Response) {
+                $result->send();
+            }
 
             return true;
         }

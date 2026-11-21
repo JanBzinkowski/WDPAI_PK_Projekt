@@ -91,7 +91,12 @@ my-app/
     │   ├── DefaultController.php # App\Controller\DefaultController: index, notFound
     │   └── ProjectController.php # App\Controller\ProjectController: index, show(int $id)
     └── core/
-        └── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
+        ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
+        └── Http/                 # App\Core\Http: Request, Response, JsonResponse, RedirectResponse
+            ├── JsonResponse.php
+            ├── RedirectResponse.php
+            ├── Request.php
+            └── Response.php
 ```
 
 Docelowe katalogi (tworzyć zgodnie z tym układem):
@@ -242,3 +247,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 | Antigravity |
 | 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
 | 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 | Antigravity |
+| 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 | Antigravity |

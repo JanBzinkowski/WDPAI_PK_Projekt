@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Core\Http\Response;
+
 final class ProjectController extends AppController
 {
-    public function index(): void
+    public function index(): Response
     {
-        $this->render('projects', [
+        return $this->render('projects', [
             'pageTitle' => 'Projekty',
         ]);
     }
 
-    public function show(int $id): void
+    public function show(int $id): Response
     {
-        $this->render('project', [
+        return $this->render('project', [
             'pageTitle' => 'Szczegóły projektu',
             'projectId' => $id,
         ]);

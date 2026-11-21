@@ -20,6 +20,5 @@ $routeFound = $routing->dispatch(
 );
 
 if (!$routeFound) {
-    http_response_code(404);
-    (new DefaultController())->notFound();
+    (new DefaultController())->notFound()->send();
 }
