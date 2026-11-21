@@ -17,7 +17,7 @@ Po każdej zmianie w projekcie MUSISZ zaktualizować AGENTS.md:
 5. Dodałeś zmienną środowiskową                        -> dopisz ją do "Zmienne środowiskowe" ORAZ do .env.example.
 6. Dodałeś klucz tłumaczenia / nową usługę / komendę   -> zaktualizuj odpowiednią sekcję.
 7. Proponując commit                                   -> użyj formatu z sekcji "Konwencja commitów"
-                                                         (prefiks: opis).
+                                                         ([NR TASKA] prefiks: opis).
 Nie usuwaj cudzych wpisów. Wpisy dopisuj w formacie istniejących tabel. Data w formacie DD-MM-RRRR.
 ```
 
@@ -157,19 +157,19 @@ docker compose up --build
 Format komunikatu:
 
 ```text
-prefiks: krótki opis w trybie rozkazującym (po angielsku)
+[KAN-xx] prefiks: krótki opis w trybie rozkazującym (po angielsku)
 ```
 
-Przykłady: `feat: add registration form`, `fix: validate empty email`.
+Przykłady: `[KAN-22] docs: define branching strategy and commit convention`, `[KAN-38] feat: implement login endpoint and credential verification`.
 
-| Prefiks    | Zastosowanie      | Przykład                            |
-|------------|-------------------|-------------------------------------|
-| `feat`     | Nowa funkcja      | `feat: add registration form`       |
-| `fix`      | Naprawa błędu     | `fix: validate empty email`         |
-| `docs`     | Dokumentacja      | `docs: explain docker setup`        |
-| `refactor` | Zmiana struktury  | `refactor: extract user repository` |
-| `test`     | Testy             | `test: cover login validation`      |
-| `chore`    | Konfiguracja      | `chore: configure nginx`            |
+| Prefiks    | Zastosowanie      | Przykład                                                |
+|------------|-------------------|---------------------------------------------------------|
+| `feat`     | Nowa funkcja      | `[KAN-37] feat: add registration service and repository`|
+| `fix`      | Naprawa błędu     | `[KAN-19] fix: update dockerfile casing`                |
+| `docs`     | Dokumentacja      | `[KAN-22] docs: define branching strategy and commit convention` |
+| `refactor` | Zmiana struktury  | `[KAN-28] refactor: extract view renderer and helper e` |
+| `test`     | Testy             | `[KAN-37] test: cover auth service registration`        |
+| `chore`    | Konfiguracja      | `[KAN-21] chore: configure composer dependencies`       |
 
 Zasady: opis małą literą, bez kropki na końcu, maks. ~72 znaki; aktualizacja AGENTS.md wchodzi w ten sam commit co zmiana, której dotyczy.
 
@@ -194,7 +194,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | 🟨 | brak query param i 400 |
 | 5 | **Obiektowy backend** (warunek konieczny) | 🟨 | PSR-4 autoloader Composer (`App\` -> `src/`), przestrzenie nazw `App\Controller`, `App\Core` |
 | 6 | ERD Mermaid w README | ⬜ | |
-| 7 | Git (małe commity, merge do main) | 🟨 | |
+| 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
 | 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ⬜ | |
 | 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | ⬜ | |
@@ -240,3 +240,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 12-11-2026 | Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 | Antigravity |
 | 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 | Antigravity |
 | 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 | Antigravity |
+| 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
