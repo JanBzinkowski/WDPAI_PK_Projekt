@@ -94,6 +94,7 @@ my-app/
         ├── Bootstrap.php         # App\Core\Bootstrap: inicjalizacja kontenera, rejestracja tras, dispatch
         ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
         ├── Container.php         # App\Core\Container: kontener DI, bind, singleton, autowiring przez refleksję
+        ├── ErrorHandler.php      # App\Core\ErrorHandler: centralna obsługa wyjątków, mapowanie kodów HTTP 400-500, HTML/JSON
         ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
         ├── Middleware/           # App\Core\Middleware: MiddlewareInterface
         │   └── MiddlewareInterface.php
@@ -255,3 +256,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 | Antigravity |
 | 21-11-2026 | Przebudowa Routera (App\Core\Router): metody GET/POST/PUT/PATCH/DELETE, override _method, parametry regex {id:\d+}, query params, obsługa 404/405, pipeline middleware i testy jednostkowe (KAN-25) | `src/core/Router.php`, `src/core/Middleware/**`, `Routing.php`, `public/index.php`, `tests/Unit/RouterTest.php`, `AGENTS.md` | 4 | Antigravity |
 | 21-11-2026 | Implementacja kontenera DI (App\Core\Container) z autowiringiem refleksyjnym, klasy Bootstrap i integracja z Routerem (KAN-26) | `src/core/Container.php`, `src/core/Bootstrap.php`, `src/core/Router.php`, `public/index.php`, `tests/Unit/ContainerTest.php`, `AGENTS.md` | 3, 5 | Antigravity |
+| 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 | Antigravity |

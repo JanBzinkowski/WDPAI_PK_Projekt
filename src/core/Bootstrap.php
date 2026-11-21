@@ -29,6 +29,10 @@ final class Bootstrap
         $container->instance(Config::class, $config);
         $container->instance(Container::class, $container);
 
+        $errorHandler = new ErrorHandler($config);
+        $errorHandler->register();
+        $container->instance(ErrorHandler::class, $errorHandler);
+
         $router = new Router($container);
         $container->instance(Router::class, $router);
 
@@ -47,7 +51,13 @@ final class Bootstrap
 
     public function handle(Request $request): Response
     {
-        return $this->router->dispatch($request);
+        try {
+            return $this->router->dispatch($request);
+        } catch (\Throwable $e) {
+            /** @var ErrorHandler $errorHandler */
+            $errorHandler = $this->container->get(ErrorHandler::class);
+            return $errorHandler->handle($e, $request);
+        }
     }
 
     public function getContainer(): Container
