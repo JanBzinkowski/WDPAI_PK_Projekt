@@ -227,8 +227,8 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
 | 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ⬜ | |
 | 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | 🟨 | App\Core\Database (PDO pgsql z env), App\Repository\BaseRepository (prepared statements, transactions) |
-| 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ⬜ | |
-| 12 | Eksport `.sql` | ⬜ | |
+| 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ✅ | 13 tabel w 3NF, CHECK (box 1-5, saldo>=0, cele>0, cena>=0), UNIQUE, indeksy |
+| 12 | Eksport `.sql` | ✅ | database/schema.sql oraz docker/db/01_schema.sql (docker-entrypoint-initdb.d) |
 | 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, `strict_types`, Composer PSR-4 autoloader |
 | 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | ⬜ | |
 | 15 | Fetch API (GET + POST, JSON, statusy, loading) | ⬜ | |
@@ -242,7 +242,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
 | 25 | Widok / trigger / funkcja / transakcja | ⬜ | |
-| 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ⬜ | |
+| 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
 | 29 | Czystość kodu | 🟨 | |
@@ -279,3 +279,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 | Antigravity |
 | 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 | Antigravity |
 | 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 | Antigravity |
+| 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 | Antigravity |
