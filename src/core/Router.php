@@ -12,8 +12,25 @@ use App\Core\Middleware\MiddlewareInterface;
 
 class Router
 {
+    protected ?Container $container;
+
     /** @var array<int, array{method: string, path: string, pattern: string, controller: class-string, action: string, middlewares: array<class-string|MiddlewareInterface>}> */
     protected array $routes = [];
+
+    public function __construct(?Container $container = null)
+    {
+        $this->container = $container;
+    }
+
+    public function setContainer(Container $container): void
+    {
+        $this->container = $container;
+    }
+
+    public function getContainer(): ?Container
+    {
+        return $this->container;
+    }
 
     public function get(string $path, string $controller, string $action, array $middlewares = []): void
     {
@@ -167,10 +184,16 @@ class Router
 
     protected function createController(string $controllerClass): AppController
     {
-        $controller = new $controllerClass();
+        if ($this->container !== null && $this->container->has($controllerClass)) {
+            $controller = $this->container->get($controllerClass);
+        } else {
+            $controller = new $controllerClass();
+        }
+
         if (!$controller instanceof AppController) {
             throw new \RuntimeException('Invalid controller: ' . $controllerClass);
         }
+
         return $controller;
     }
 
