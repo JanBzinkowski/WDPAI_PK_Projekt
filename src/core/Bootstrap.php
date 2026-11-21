@@ -29,6 +29,9 @@ final class Bootstrap
         $container->instance(Config::class, $config);
         $container->instance(Container::class, $container);
 
+        $database = new Database($config);
+        $container->instance(Database::class, $database);
+
         $errorHandler = new ErrorHandler($config);
         $errorHandler->register();
         $container->instance(ErrorHandler::class, $errorHandler);

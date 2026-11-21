@@ -97,6 +97,7 @@ my-app/
         ├── Bootstrap.php         # App\Core\Bootstrap: inicjalizacja kontenera, rejestracja tras, dispatch
         ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
         ├── Container.php         # App\Core\Container: kontener DI, bind, singleton, autowiring przez refleksję
+        ├── Database.php          # App\Core\Database: połączenie PDO z env, obsługa transakcji (transactional)
         ├── ErrorHandler.php      # App\Core\ErrorHandler: centralna obsługa wyjątków, mapowanie kodów HTTP 400-500, HTML/JSON
         ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
         ├── View.php              # App\Core\View: silnik szablonów *.html.php z obsługą layoutów i partiali
@@ -213,7 +214,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
 | 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ⬜ | |
-| 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | ⬜ | |
+| 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | 🟨 | App\Core\Database (PDO pgsql z env), App\Repository\BaseRepository (prepared statements, transactions) |
 | 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ⬜ | |
 | 12 | Eksport `.sql` | ⬜ | |
 | 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, `strict_types`, Composer PSR-4 autoloader |
@@ -263,3 +264,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Implementacja kontenera DI (App\Core\Container) z autowiringiem refleksyjnym, klasy Bootstrap i integracja z Routerem (KAN-26) | `src/core/Container.php`, `src/core/Bootstrap.php`, `src/core/Router.php`, `public/index.php`, `tests/Unit/ContainerTest.php`, `AGENTS.md` | 3, 5 | Antigravity |
 | 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 | Antigravity |
 | 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 | Antigravity |
+| 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 | Antigravity |
