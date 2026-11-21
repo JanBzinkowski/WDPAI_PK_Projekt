@@ -56,4 +56,4 @@ Poszczególne procedury są również dostępne jako natywne skille workspace w 
    - Baza danych (jeśli modyfikowano tabele)
    - Rejestr zaimplementowanych funkcjonalności
    - Checklistę kryteriów
-3. Przygotuj commit zgodnie z konwencją: `[NR TASKA] prefiks: opis`.
+3. Przygotuj commit zgodnie z konwencją: `prefiks: opis` (np. `feat: add login form`).

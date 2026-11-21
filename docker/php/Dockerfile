@@ -5,6 +5,8 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 
 RUN apk add --no-cache \
+        git \
+        unzip \
         zlib \
         libzip \
         libpng \
@@ -34,4 +36,10 @@ RUN { \
       echo 'max_file_uploads = 20'; \
     } > /usr/local/etc/php/conf.d/mealplanner.ini
 
+COPY composer.json composer.lock* ./
+RUN composer install --no-interaction --prefer-dist --no-scripts --no-autoloader
+
 COPY . .
+RUN composer dump-autoload --optimize
+
+CMD ["sh", "-c", "if [ ! -f /app/vendor/autoload.php ]; then composer install --no-interaction --prefer-dist --optimize-autoloader; fi && exec php-fpm"]
