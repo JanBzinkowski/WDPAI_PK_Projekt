@@ -32,6 +32,9 @@ final class Bootstrap
         $database = new Database($config);
         $container->instance(Database::class, $database);
 
+        $translator = new Translator('pl');
+        $container->instance(Translator::class, $translator);
+
         $errorHandler = new ErrorHandler($config);
         $errorHandler->register();
         $container->instance(ErrorHandler::class, $errorHandler);

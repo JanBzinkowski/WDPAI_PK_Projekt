@@ -100,6 +100,8 @@ my-app/
         ├── Database.php          # App\Core\Database: połączenie PDO z env, obsługa transakcji (transactional)
         ├── ErrorHandler.php      # App\Core\ErrorHandler: centralna obsługa wyjątków, mapowanie kodów HTTP 400-500, HTML/JSON
         ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
+        ├── Translator.php        # App\Core\Translator: obsługa tłumaczeń i18n (PL/EN) z podmianą parametrów
+        ├── Validator.php         # App\Core\Validator: backendowy walidator reguł (required, email, min, max, between, in, enum, same)
         ├── View.php              # App\Core\View: silnik szablonów *.html.php z obsługą layoutów i partiali
         ├── helpers.php           # globalny helper escapowania e() (htmlspecialchars ENT_QUOTES UTF-8)
         ├── Middleware/           # App\Core\Middleware: MiddlewareInterface
@@ -234,7 +236,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
 | 29 | Czystość kodu | 🟨 | |
-| 30 | Tłumaczenia PL/EN (także walidacja/błędy) | ⬜ | |
+| 30 | Tłumaczenia PL/EN (także walidacja/błędy) | 🟨 | App\Core\Translator (PL/EN w lang/pl.php i lang/en.php), komunikaty walidacji w Validator |
 | 31 | Testy jednostkowe (+ polecenie uruchomienia) | ⬜ | zależność `phpunit/phpunit` dodana w `composer.json` |
 | 32 | CRON (harmonogram, log, idempotencja) | ⬜ | |
 | 33 | PHPMailer / SMTP (Mailpit lokalnie) | ⬜ | usługa mailpit istnieje; zależność `phpmailer/phpmailer` w `composer.json` |
@@ -265,3 +267,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 | Antigravity |
 | 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 | Antigravity |
 | 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 | Antigravity |
+| 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 | Antigravity |
