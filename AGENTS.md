@@ -190,9 +190,9 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 |----|-----------|--------|---------------|
 | 1 | README.md (opis, uruchomienie, demo, zrzuty, przepływ, architektura, ERD, testy, link) | ⬜ | |
 | 2 | Docker (`docker compose up --build`, nazwy usług, wolumen, opis portów/zmiennych) | 🟨 | `docker-compose.yaml` naprawiony; brak opisu w `README.md` |
-| 3 | Architektura (warstwy, diagram w README) | 🟨 | są kontrolery i widoki |
+| 3 | Architektura (warstwy, diagram w README) | ✅ | src/Core, Controller, Service, Repository, Model, Exception; diagram Mermaid w README.md |
 | 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | 🟨 | brak query param i 400 |
-| 5 | **Obiektowy backend** (warunek konieczny) | 🟨 | PSR-4 autoloader Composer (`App\` -> `src/`), przestrzenie nazw `App\Controller`, `App\Core` |
+| 5 | **Obiektowy backend** (warunek konieczny) | ✅ | PSR-4 autoloader Composer, strict_types, podział na warstwy Controller/Service/Repository/Model/Core |
 | 6 | ERD Mermaid w README | ⬜ | |
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
@@ -241,3 +241,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 | Antigravity |
 | 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 | Antigravity |
 | 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
+| 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 | Antigravity |
