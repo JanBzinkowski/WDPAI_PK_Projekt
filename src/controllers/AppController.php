@@ -7,23 +7,27 @@ namespace App\Controller;
 use App\Core\Http\JsonResponse;
 use App\Core\Http\RedirectResponse;
 use App\Core\Http\Response;
+use App\Core\View;
+
+require_once dirname(__DIR__) . '/core/helpers.php';
 
 abstract class AppController
 {
-    protected function render(string $template, array $variables = [], int $status = 200): Response
+    protected View $view;
+
+    public function __construct(?View $view = null)
     {
-        $templatePath = dirname(__DIR__, 2) . '/public/views/' . $template . '.html.php';
+        $this->view = $view ?? new View();
+    }
 
-        if (!is_file($templatePath)) {
-            throw new \RuntimeException('View not found: ' . $template);
-        }
-
-        extract($variables, EXTR_SKIP);
-        ob_start();
-        require $templatePath;
-        $content = (string) ob_get_clean();
-
-        return new Response($content, $status, ['Content-Type' => 'text/html; charset=utf-8']);
+    protected function render(
+        string $template,
+        array $variables = [],
+        ?string $layout = 'layout',
+        int $status = 200
+    ): Response {
+        $html = $this->view->render($template, $variables, $layout);
+        return new Response($html, $status, ['Content-Type' => 'text/html; charset=utf-8']);
     }
 
     protected function json(mixed $data, int $status = 200): JsonResponse
@@ -34,5 +38,14 @@ abstract class AppController
     protected function redirect(string $url, int $status = 302): RedirectResponse
     {
         return new RedirectResponse($url, $status);
+    }
+
+    protected function currentUser(): ?object
+    {
+        if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user']) && is_object($_SESSION['user'])) {
+            return $_SESSION['user'];
+        }
+
+        return null;
     }
 }

@@ -82,9 +82,12 @@ my-app/
 │   ├── index.php                 # punkt wejścia: vendor/autoload.php + rejestracja tras + dispatch
 │   └── views/
 │       ├── home.html.php
+│       ├── layout.html.php       # główny layout z partialami (header, nav, footer) i anty-FOUC
 │       ├── not-found.html.php
 │       ├── project.html.php
-│       └── projects.html.php
+│       ├── projects.html.php
+│       ├── errors/               # widoki błędów HTTP (400, 401, 403, 404, 500, error)
+│       └── partials/             # wspólne partiale (header, nav, footer)
 └── src/
     ├── controllers/
     │   ├── AppController.php     # App\Controller\AppController: abstrakcyjny kontroler bazowy, render()
@@ -96,6 +99,8 @@ my-app/
         ├── Container.php         # App\Core\Container: kontener DI, bind, singleton, autowiring przez refleksję
         ├── ErrorHandler.php      # App\Core\ErrorHandler: centralna obsługa wyjątków, mapowanie kodów HTTP 400-500, HTML/JSON
         ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
+        ├── View.php              # App\Core\View: silnik szablonów *.html.php z obsługą layoutów i partiali
+        ├── helpers.php           # globalny helper escapowania e() (htmlspecialchars ENT_QUOTES UTF-8)
         ├── Middleware/           # App\Core\Middleware: MiddlewareInterface
         │   └── MiddlewareInterface.php
         └── Http/                 # App\Core\Http: Request, Response, JsonResponse, RedirectResponse
@@ -257,3 +262,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Przebudowa Routera (App\Core\Router): metody GET/POST/PUT/PATCH/DELETE, override _method, parametry regex {id:\d+}, query params, obsługa 404/405, pipeline middleware i testy jednostkowe (KAN-25) | `src/core/Router.php`, `src/core/Middleware/**`, `Routing.php`, `public/index.php`, `tests/Unit/RouterTest.php`, `AGENTS.md` | 4 | Antigravity |
 | 21-11-2026 | Implementacja kontenera DI (App\Core\Container) z autowiringiem refleksyjnym, klasy Bootstrap i integracja z Routerem (KAN-26) | `src/core/Container.php`, `src/core/Bootstrap.php`, `src/core/Router.php`, `public/index.php`, `tests/Unit/ContainerTest.php`, `AGENTS.md` | 3, 5 | Antigravity |
 | 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 | Antigravity |
+| 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 | Antigravity |

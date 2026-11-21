@@ -1,14 +1,9 @@
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
-</head>
-<body>
-    <main>
-        <h1>Strona główna</h1>
-        <a href="/projects">Zobacz projekty</a>
-    </main>
-</body>
-</html>
+<?php
+
+declare(strict_types=1);
+?>
+<section class="page-home">
+    <h1><?= e($pageTitle ?? 'Strona główna') ?></h1>
+    <p>Witaj w aplikacji do powtórek fiszek w systemie Leitnera.</p>
+    <a href="/projects" class="btn btn-primary">Zobacz projekty / zestawy</a>
+</section>

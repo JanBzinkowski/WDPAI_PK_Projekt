@@ -1,15 +1,10 @@
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pageTitle) ?></title>
-</head>
-<body>
-    <main>
-        <h1>404</h1>
-        <p>Taka strona nie istnieje.</p>
-        <a href="/">Wróć na stronę główną</a>
-    </main>
-</body>
-</html>
+<?php
+
+declare(strict_types=1);
+?>
+<section class="page-not-found">
+    <h1>404</h1>
+    <h2><?= e($pageTitle ?? 'Nie znaleziono strony') ?></h2>
+    <p>Przepraszamy, wskazany zasób nie istnieje.</p>
+    <a href="/" class="btn btn-secondary">Wróć na stronę główną</a>
+</section>
