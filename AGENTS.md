@@ -241,7 +241,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
-| 25 | Widok / trigger / funkcja / transakcja | 🟨 | Widok SQL v_user_stats (agregacja statystyk Leitnera i profilu) |
+| 25 | Widok / trigger / funkcja / transakcja | ✅ | Widok v_user_stats, triggery updated_at oraz flashcard_count, funkcja leitner_interval |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
@@ -258,17 +258,17 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 
 > Dopisuj nowe wiersze na dole. Jeden wiersz = jedna funkcjonalność / zmiana.
 
-| Data | Funkcjonalność | Pliki | Kryteria | Autor/Agent |
-|------|----------------|-------|----------|-------------|
-| 2026-11-11 | Szkielet Docker (nginx, php-fpm 8.3, postgres 16, mailpit, pgAdmin) | `docker-compose.yaml`, `docker/**` | 2 | — |
-| 2026-11-11 | Router obiektowy (GET/POST, parametry `{id}`) + fallback 404 | `Routing.php`, `public/index.php` | 4, 5 | — |
-| 2026-11-11 | Kontrolery bazowe i widoki (home, projects, project, not-found) | `src/controllers/*`, `public/views/*` | 3, 5 | — |
-| 2026-11-11 | Utworzenie AGENTS.md | `AGENTS.md` | 29 | AI agent |
-| 12-11-2026 | Naprawa `docker-compose.yaml` (wielkość liter `Dockerfile`, `depends_on` z `pg_isready`, wolumen `pg-data`) | `docker-compose.yaml`, `docker/nginx/Dockerfile`, `docker/php/Dockerfile` | 2 | Antigravity |
-| 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 | AI agent |
-| 12-11-2026 | Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 | Antigravity |
-| 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 | Antigravity |
-| 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 | Antigravity |
+| Data | Funkcjonalność | Pliki | Kryteria |
+|------|----------------|-------|----------|
+| 2026-11-11 | Szkielet Docker (nginx, php-fpm 8.3, postgres 16, mailpit, pgAdmin) | `docker-compose.yaml`, `docker/**` | 2 |
+| 2026-11-11 | Router obiektowy (GET/POST, parametry `{id}`) + fallback 404 | `Routing.php`, `public/index.php` | 4, 5 |
+| 2026-11-11 | Kontrolery bazowe i widoki (home, projects, project, not-found) | `src/controllers/*`, `public/views/*` | 3, 5 |
+| 2026-11-11 | Utworzenie AGENTS.md | `AGENTS.md` | 29 |
+| 12-11-2026 | Naprawa `docker-compose.yaml` (wielkość liter `Dockerfile`, `depends_on` z `pg_isready`, wolumen `pg-data`) | `docker-compose.yaml`, `docker/nginx/Dockerfile`, `docker/php/Dockerfile` | 2 |
+| 12-11-2026 | Dodanie SKILLS.md oraz workspace skills dla agentów (.agents/skills) | `SKILLS.md`, `.agents/skills/**` | 3, 5, 10, 20, 27, 29 |
+| 12-11-2026 | Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 |
+| 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 |
+| 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 |
 | 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
 | 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 | Antigravity |
 | 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 | Antigravity |
@@ -281,3 +281,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 | Antigravity |
 | 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 | Antigravity |
 | 22-11-2026 | Utworzenie widoku SQL v_user_stats do agregacji statystyk profilu oraz PgUserStatsRepository z testami (KAN-33) | `database/schema.sql`, `docker/db/01_schema.sql`, `src/repositories/UserStatsRepositoryInterface.php`, `src/repositories/PgUserStatsRepository.php`, `tests/Unit/UserStatsRepositoryTest.php`, `AGENTS.md` | 25, 26 | Antigravity |
+| 22-11-2026 | Dodanie triggerów updated_at, licznika fiszek w talii oraz funkcji leitner_interval w PostgreSQL (KAN-34) | `database/schema.sql`, `docker/db/01_schema.sql`, `README.md`, `AGENTS.md` | 25 | Antigravity |

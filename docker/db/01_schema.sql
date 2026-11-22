@@ -185,3 +185,63 @@ LEFT JOIN user_flashcard_progress p ON p.user_id = u.id
 LEFT JOIN daily_activity a ON a.user_id = u.id
 GROUP BY u.id, u.username, u.email, u.role, u.coins, u.gems;
 
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_users_updated_at
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER trg_user_settings_updated_at
+BEFORE UPDATE ON user_settings
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER trg_decks_updated_at
+BEFORE UPDATE ON decks
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER trg_flashcards_updated_at
+BEFORE UPDATE ON flashcards
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at_column();
+
+CREATE OR REPLACE FUNCTION leitner_interval(p_box INT)
+RETURNS INTERVAL AS $$
+BEGIN
+    RETURN CASE p_box
+        WHEN 1 THEN INTERVAL '1 day'
+        WHEN 2 THEN INTERVAL '3 days'
+        WHEN 3 THEN INTERVAL '7 days'
+        WHEN 4 THEN INTERVAL '14 days'
+        WHEN 5 THEN INTERVAL '30 days'
+        ELSE INTERVAL '1 day'
+    END;
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+CREATE OR REPLACE FUNCTION update_deck_flashcard_count()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'INSERT') THEN
+        UPDATE decks SET flashcard_count = flashcard_count + 1 WHERE id = NEW.deck_id;
+    ELSIF (TG_OP = 'DELETE') THEN
+        UPDATE decks SET flashcard_count = GREATEST(0, flashcard_count - 1) WHERE id = OLD.deck_id;
+    END IF;
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_flashcards_count
+AFTER INSERT OR DELETE ON flashcards
+FOR EACH ROW
+EXECUTE FUNCTION update_deck_flashcard_count();
+
+

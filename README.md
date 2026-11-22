@@ -227,4 +227,15 @@ erDiagram
 - **Warunki CHECK**: `box BETWEEN 1 AND 5`, `daily_goal > 0`, `price_coins >= 0`, `price_gems >= 0`.
 - **Kaskadowe usuwanie (ON DELETE)**: usunięcie talii usuwa jej fiszki i postęp (`CASCADE`), podczas gdy historia zakupów `user_items` zachowuje integralność (`RESTRICT`).
 
+---
+
+## 4. Zaawansowane mechanizmy bazy danych (PostgreSQL 16)
+
+W projekcie wykorzystano zaawansowane mechanizmy silnika PostgreSQL:
+1. **Widok statystyk `v_user_stats`**: agreguje w jednym zapytaniu informacje o postępach w pudełkach Leitnera (box 1-5), liczbie talii, ukończonych fiszek oraz passie dni (streak).
+2. **Procedury i Triggery `update_updated_at_column`**: automatycznie aktualizują pole `updated_at` w tabelach `users`, `user_settings`, `decks` i `flashcards` przy każdej modyfikacji rekordu.
+3. **Trigger denormalizacyjny `update_deck_flashcard_count`**: dynamicznie inkrementuje/dekrementuje liczbę `flashcard_count` w tabeli `decks` po dodaniu lub usunięciu fiszki, eliminując konieczność kosztownych zapytań `COUNT(*)` w listach talii.
+4. **Funkcja SQL `leitner_interval(box)`**: funkcja wyliczająca interwał czasowy (`INTERVAL`) dla kolejnych pudełek systemu Leitnera (pudełko 1: 1 dzień, 2: 3 dni, 3: 7 dni, 4: 14 dni, 5: 30 dni).
+
+
 
