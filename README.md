@@ -237,5 +237,28 @@ W projekcie wykorzystano zaawansowane mechanizmy silnika PostgreSQL:
 3. **Trigger denormalizacyjny `update_deck_flashcard_count`**: dynamicznie inkrementuje/dekrementuje liczbę `flashcard_count` w tabeli `decks` po dodaniu lub usunięciu fiszki, eliminując konieczność kosztownych zapytań `COUNT(*)` w listach talii.
 4. **Funkcja SQL `leitner_interval(box)`**: funkcja wyliczająca interwał czasowy (`INTERVAL`) dla kolejnych pudełek systemu Leitnera (pudełko 1: 1 dzień, 2: 3 dni, 3: 7 dni, 4: 14 dni, 5: 30 dni).
 
+---
+
+## 5. Konta demonstracyjne i dane testowe
+
+W aplikacji przygotowano gotowe konta demonstracyjne oraz zestawy fiszek i przedmioty sklepu zgodne z makietami:
+
+| Rola | E-mail | Hasło | Opis konta |
+|---|---|---|---|
+| **USER** | `user@demo.pl` | `Demo1234!` | Konto standardowe z historią nauki, serią (streak), monetami i ekwipunkiem |
+| **ADMIN** | `admin@demo.pl` | `Admin1234!` | Konto z pełnymi uprawnieniami administratora |
+
+### Gotowe zestawy fiszek (Decks):
+- **Angielski B2 - Słownictwo biznesowe** (publiczny, 5 fiszek)
+- **Podstawy PHP 8.3 i OOP** (publiczny, 5 fiszek)
+- **Historia Polski - Daty i wydarzenia** (prywatny, 3 fiszki)
+
+### Odtwarzanie bazy danych z pliku dump:
+Baza inicjalizuje się automatycznie przy pierwszym uruchomieniu `docker compose up --build`. Aby ręcznie zaimportować pełny zrzut schematu wraz z danymi demonstracyjnymi:
+```bash
+docker compose exec -T db psql -U wdpai -d wdpai < database/dump.sql
+```
+
+
 
 

@@ -93,29 +93,6 @@ my-app/
     │   ├── AppController.php     # App\Controller\AppController: abstrakcyjny kontroler bazowy, render()
     │   ├── DefaultController.php # App\Controller\DefaultController: index, notFound
     │   └── ProjectController.php # App\Controller\ProjectController: index, show(int $id)
-    ├── models/                   # App\Model: silnie typowane encje domenowe i enumy
-    │   ├── Enums/                # Role, Visibility, Currency, ItemCategory, LeitnerBox
-    │   │   ├── Currency.php
-    │   │   ├── ItemCategory.php
-    │   │   ├── LeitnerBox.php
-    │   │   ├── Role.php
-    │   │   └── Visibility.php
-    │   ├── CurrencyTransaction.php
-    │   ├── DailyActivity.php
-    │   ├── DailyTest.php
-    │   ├── Deck.php
-    │   ├── Flashcard.php
-    │   ├── FlashcardProgress.php
-    │   ├── ModelInterface.php
-    │   ├── ShopItem.php
-    │   ├── User.php
-    │   ├── UserItem.php
-    │   └── UserSettings.php
-    ├── repositories/             # App\Repository: interfejsy i repozytoria PDO
-    │   ├── BaseRepository.php
-    │   ├── PgUserStatsRepository.php
-    │   ├── RepositoryInterface.php
-    │   └── UserStatsRepositoryInterface.php
     └── core/
         ├── Bootstrap.php         # App\Core\Bootstrap: inicjalizacja kontenera, rejestracja tras, dispatch
         ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
@@ -240,7 +217,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 
 | Nr | Kryterium | Status | Gdzie / uwagi |
 |----|-----------|--------|---------------|
-| 1 | README.md (opis, uruchomienie, demo, zrzuty, przepływ, architektura, ERD, testy, link) | ⬜ | |
+| 1 | README.md (opis, uruchomienie, demo, zrzuty, przepływ, architektura, ERD, testy, link) | 🟨 | README.md zawiera opis, konta demo, architekturę warstw, diagram ERD 3NF |
 | 2 | Docker (`docker compose up --build`, nazwy usług, wolumen, opis portów/zmiennych) | 🟨 | `docker-compose.yaml` naprawiony; brak opisu w `README.md` |
 | 3 | Architektura (warstwy, diagram w README) | ✅ | src/Core, Controller, Service, Repository, Model, Exception; diagram Mermaid w README.md |
 | 4 | Routing (metody, statyczna, regex, path param + walidacja, query param, 400/404) | ✅ | Router w src/core/Router.php: GET/POST/PUT/PATCH/DELETE, override _method, regex {id:\d+}, 404/405, middleware, testy tests/Unit/RouterTest.php |
@@ -262,9 +239,9 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ⬜ | |
 | 21 | Sesja (regeneracja ID, flagi cookie) | ⬜ | |
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
-| 23 | Role (≥2, np. USER/ADMIN) | ✅ | Enum Role::USER i Role::ADMIN, pole role w users, autoryzacja |
+| 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
-| 25 | Widok / trigger / funkcja / transakcja | ✅ | Widok v_user_stats, triggery updated_at oraz flashcard_count, funkcja leitner_interval |
+| 25 | Widok / trigger / funkcja / transakcja | 🟨 | Widok SQL v_user_stats (agregacja statystyk Leitnera i profilu) |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
@@ -292,17 +269,18 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 12-11-2026 | Utworzenie `.env.example` oraz klasy `Config` (`src/core/Config.php`) i przekazanie `env_file: .env` do `php` | `.env.example`, `src/core/Config.php`, `docker-compose.yaml` | 5, 10, 35 |
 | 12-11-2026 | Uproszczenie konwencji commitów (usunięcie prefiksów zadań) i weryfikacja braku zewnętrznych zależności LLM | `AGENTS.md`, `SKILLS.md` | 29 |
 | 12-11-2026 | Dodanie Composer z autoloaderem PSR-4 (`App\` -> `src/`), zależnościami (`phpmailer/phpmailer`, `phpunit/phpunit`), przestrzeniami nazw i zastąpienie `require_once` klas autoloaderem | `composer.json`, `docker/php/Dockerfile`, `public/index.php`, `Routing.php`, `src/controllers/*`, `src/core/Config.php` | 5, 13, 31, 33 |
-| 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 | Antigravity |
-| 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 | Antigravity |
-| 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 | Antigravity |
-| 21-11-2026 | Przebudowa Routera (App\Core\Router): metody GET/POST/PUT/PATCH/DELETE, override _method, parametry regex {id:\d+}, query params, obsługa 404/405, pipeline middleware i testy jednostkowe (KAN-25) | `src/core/Router.php`, `src/core/Middleware/**`, `Routing.php`, `public/index.php`, `tests/Unit/RouterTest.php`, `AGENTS.md` | 4 | Antigravity |
-| 21-11-2026 | Implementacja kontenera DI (App\Core\Container) z autowiringiem refleksyjnym, klasy Bootstrap i integracja z Routerem (KAN-26) | `src/core/Container.php`, `src/core/Bootstrap.php`, `src/core/Router.php`, `public/index.php`, `tests/Unit/ContainerTest.php`, `AGENTS.md` | 3, 5 | Antigravity |
-| 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 | Antigravity |
-| 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 | Antigravity |
-| 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 | Antigravity |
-| 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 | Antigravity |
-| 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 | Antigravity |
-| 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 | Antigravity |
+| 21-11-2026 | Ustalenie strategii gałęzi Git i konwencji commitów ([KAN-xx] prefiks: opis) oraz opis workflow w README (KAN-22) | `README.md`, `AGENTS.md`, `SKILLS.md` | 7 |
+| 21-11-2026 | Zaprojektowanie struktury katalogów i warstw backendu OOP (src/Core, Controller, Service, Repository, Model, Exception, public/views/partials) i diagramu warstw w README (KAN-23) | `src/**`, `public/views/partials/**`, `README.md`, `AGENTS.md` | 3, 5 |
+| 21-11-2026 | Implementacja obiektów Request i Response (HTML/JSON/redirect), refaktoryzacja kontrolerów i testy jednostkowe Http (KAN-24) | `src/core/Http/**`, `src/controllers/**`, `Routing.php`, `tests/Unit/HttpTest.php`, `AGENTS.md` | 5, 13 |
+| 21-11-2026 | Przebudowa Routera (App\Core\Router): metody GET/POST/PUT/PATCH/DELETE, override _method, parametry regex {id:\d+}, query params, obsługa 404/405, pipeline middleware i testy jednostkowe (KAN-25) | `src/core/Router.php`, `src/core/Middleware/**`, `Routing.php`, `public/index.php`, `tests/Unit/RouterTest.php`, `AGENTS.md` | 4 |
+| 21-11-2026 | Implementacja kontenera DI (App\Core\Container) z autowiringiem refleksyjnym, klasy Bootstrap i integracja z Routerem (KAN-26) | `src/core/Container.php`, `src/core/Bootstrap.php`, `src/core/Router.php`, `public/index.php`, `tests/Unit/ContainerTest.php`, `AGENTS.md` | 3, 5 |
+| 21-11-2026 | Centralna obsługa wyjątków (App\Core\ErrorHandler), klasy wyjątków HTTP (400, 401, 403, 404, 409, 422), widoki błędów i testy (KAN-27) | `src/core/ErrorHandler.php`, `src/exceptions/**`, `public/views/errors/**`, `tests/Unit/ErrorHandlerTest.php`, `AGENTS.md` | 4, 13 |
+| 21-11-2026 | Refaktoryzacja AppController, wydzielenie silnika View (layout, partiale), helper e() i currentUser() (KAN-28) | `src/core/View.php`, `src/core/helpers.php`, `src/controllers/AppController.php`, `public/views/layout.html.php`, `public/views/*.html.php`, `tests/Unit/ViewTest.php`, `AGENTS.md` | 5, 9, 28 |
+| 21-11-2026 | Implementacja klasy Database (PDO) z transakcjami oraz BaseRepository z helperami fetchOne/fetchAll/execute i testami (KAN-29) | `src/core/Database.php`, `src/repositories/BaseRepository.php`, `src/core/Bootstrap.php`, `tests/Unit/DatabaseTest.php`, `AGENTS.md` | 10, 28 |
+| 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 |
+| 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 |
+| 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 |
 | 22-11-2026 | Utworzenie widoku SQL v_user_stats do agregacji statystyk profilu oraz PgUserStatsRepository z testami (KAN-33) | `database/schema.sql`, `docker/db/01_schema.sql`, `src/repositories/UserStatsRepositoryInterface.php`, `src/repositories/PgUserStatsRepository.php`, `tests/Unit/UserStatsRepositoryTest.php`, `AGENTS.md` | 25, 26 | Antigravity |
 | 22-11-2026 | Dodanie triggerów updated_at, licznika fiszek w talii oraz funkcji leitner_interval w PostgreSQL (KAN-34) | `database/schema.sql`, `docker/db/01_schema.sql`, `README.md`, `AGENTS.md` | 25 | Antigravity |
 | 22-11-2026 | Utworzenie klas modeli domenowych i enumów (User, Deck, Flashcard, Progress, Shop, Role, LeitnerBox) z testami (KAN-35) | `src/models/**`, `tests/Unit/ModelTest.php`, `AGENTS.md` | 5, 23 | Antigravity |
+| 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 | Antigravity |
