@@ -241,7 +241,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
-| 25 | Widok / trigger / funkcja / transakcja | ⬜ | |
+| 25 | Widok / trigger / funkcja / transakcja | 🟨 | Widok SQL v_user_stats (agregacja statystyk Leitnera i profilu) |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
@@ -280,3 +280,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Implementacja backendowego walidatora Validator oraz mechanizmu tłumaczeń i18n Translator (PL/EN) z testami (KAN-30) | `src/core/Validator.php`, `src/core/Translator.php`, `lang/pl.php`, `lang/en.php`, `src/core/Bootstrap.php`, `tests/Unit/ValidatorTest.php`, `AGENTS.md` | 13, 28, 30 | Antigravity |
 | 21-11-2026 | Projekt schematu bazy danych w 3NF, opis ograniczeń integralności i dodanie diagramu ERD Mermaid w README (KAN-31) | `README.md`, `AGENTS.md` | 6, 11 | Antigravity |
 | 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 | Antigravity |
+| 22-11-2026 | Utworzenie widoku SQL v_user_stats do agregacji statystyk profilu oraz PgUserStatsRepository z testami (KAN-33) | `database/schema.sql`, `docker/db/01_schema.sql`, `src/repositories/UserStatsRepositoryInterface.php`, `src/repositories/PgUserStatsRepository.php`, `tests/Unit/UserStatsRepositoryTest.php`, `AGENTS.md` | 25, 26 | Antigravity |

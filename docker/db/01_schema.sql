@@ -161,3 +161,27 @@ CREATE INDEX idx_decks_user_id ON decks(user_id);
 CREATE INDEX idx_flashcards_deck_id ON flashcards(deck_id);
 CREATE INDEX idx_review_logs_user_reviewed ON review_logs(user_id, reviewed_at);
 CREATE INDEX idx_currency_transactions_user ON currency_transactions(user_id);
+
+CREATE OR REPLACE VIEW v_user_stats AS
+SELECT 
+    u.id AS user_id,
+    u.username,
+    u.email,
+    u.role,
+    u.coins,
+    u.gems,
+    COALESCE(COUNT(DISTINCT d.id), 0) AS total_decks,
+    COALESCE(COUNT(DISTINCT p.id), 0) AS total_cards_learned,
+    COALESCE(COUNT(DISTINCT CASE WHEN p.box = 1 THEN p.id END), 0) AS box_1_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN p.box = 2 THEN p.id END), 0) AS box_2_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN p.box = 3 THEN p.id END), 0) AS box_3_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN p.box = 4 THEN p.id END), 0) AS box_4_count,
+    COALESCE(COUNT(DISTINCT CASE WHEN p.box = 5 THEN p.id END), 0) AS box_5_count,
+    COALESCE(MAX(a.streak_days), 0) AS current_streak,
+    COALESCE(SUM(a.reviews_count), 0) AS total_reviews_done
+FROM users u
+LEFT JOIN decks d ON d.user_id = u.id
+LEFT JOIN user_flashcard_progress p ON p.user_id = u.id
+LEFT JOIN daily_activity a ON a.user_id = u.id
+GROUP BY u.id, u.username, u.email, u.role, u.coins, u.gems;
+
