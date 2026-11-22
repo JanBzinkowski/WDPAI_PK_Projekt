@@ -19,6 +19,14 @@ declare(strict_types=1);
             <div class="alert alert-success" role="alert">
                 <?= e($success) ?>
             </div>
+        <?php elseif (isset($_GET['registered']) && $_GET['registered'] === '1'): ?>
+            <div class="alert alert-success" role="alert">
+                Rejestracja zakończona sukcesem! Możesz się teraz zalogować.
+            </div>
+        <?php elseif (isset($_GET['logged_out']) && $_GET['logged_out'] === '1'): ?>
+            <div class="alert alert-success" role="alert">
+                Wylogowano pomyślnie.
+            </div>
         <?php endif; ?>
 
         <div id="auth-alert" class="alert alert-danger" style="display: none;" role="alert" aria-live="polite"></div>

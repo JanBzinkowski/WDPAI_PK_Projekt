@@ -83,11 +83,13 @@ my-app/
 │   │   └── main.css              # style aplikacji, zmienne motywów dark/light, formularze, karty, mobile-first
 │   ├── js/
 │   │   ├── auth-login.js         # walidacja formularza logowania w ES6
+│   │   ├── auth-register.js      # walidacja formularza rejestracji w ES6
 │   │   └── main.js               # główny moduł JS aplikacji (motyw, alerty)
 │   ├── index.php                 # punkt wejścia: vendor/autoload.php + rejestracja tras + dispatch
 │   └── views/
 │       ├── auth/
-│       │   └── login.html.php    # widok logowania mobile zgodny z Figma
+│       │   ├── login.html.php    # widok logowania mobile zgodny z Figma
+│       │   └── register.html.php # widok rejestracji mobile spójny ze stylem Figma
 │       ├── home.html.php
 │       ├── layout.html.php       # główny layout z partialami (header, nav, footer) i anty-FOUC
 │       ├── not-found.html.php
@@ -241,12 +243,12 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 6 | ERD Mermaid w README | ✅ | Diagram ERD Mermaid w README.md (relacje 3NF, klucze, atrybuty) |
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
-| 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | 🟨 | formularz logowania (views/auth/login.html.php) z etykietami, autocomplete, layout i partiale |
+| 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ✅ | widoki logowania i rejestracji (views/auth/*) z semantycznym HTML, etykietami, autocomplete, layout i partiale |
 | 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | 🟨 | App\Core\Database (PDO pgsql z env), App\Repository\BaseRepository (prepared statements, transactions) |
 | 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ✅ | 13 tabel w 3NF, CHECK (box 1-5, saldo>=0, cele>0, cena>=0), UNIQUE, indeksy |
 | 12 | Eksport `.sql` | ✅ | database/schema.sql oraz docker/db/01_schema.sql (docker-entrypoint-initdb.d) |
 | 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, `strict_types`, Composer PSR-4 autoloader |
-| 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | 🟨 | public/js/auth-login.js (walidacja client-side, aria-invalid), public/js/main.js |
+| 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | ✅ | public/js (auth-login.js, auth-register.js, main.js) w ES6, walidacja zdarzeń, obsługa ARIA aria-invalid |
 | 15 | Fetch API (GET + POST, JSON, statusy, loading) | ⬜ | |
 | 16 | Design (spójny, CSS w plikach) | 🟨 | public/css/main.css, spójna paleta kolorów, karty, formularze, media queries mobile |
 | 17 | Responsywność (≥5 widoków) | ⬜ | |
@@ -306,3 +308,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Implementacja bezpiecznego wylogowania AuthController::logout (unieważnienie sesji i cookie), CSRF i testy (KAN-40) | `src/controllers/AuthController.php`, `src/core/CsrfToken.php`, `public/views/partials/nav.html.php`, `tests/Unit/LogoutTest.php`, `AGENTS.md` | 24 |
 | 22-11-2026 | Middleware autoryzacji AuthMiddleware i RoleMiddleware (401/403), polityka uprawnień DeckPolicy i testy (KAN-41) | `src/core/Middleware/AuthMiddleware.php`, `src/core/Middleware/RoleMiddleware.php`, `src/services/Policies/DeckPolicy.php`, `tests/Unit/AuthorizationTest.php`, `AGENTS.md` | 22, 23 |
 | 22-11-2026 | Responsywny widok logowania mobile (views/auth/login.html.php), arkusz main.css (motywy, formularze, karty) i walidacja JS (KAN-42) | `public/css/main.css`, `public/views/auth/login.html.php`, `public/js/auth-login.js`, `public/js/main.js`, `AGENTS.md` | 9, 14, 16, 18, 20 |
+| 22-11-2026 | Responsywny widok rejestracji mobile (views/auth/register.html.php) spójny z Figma, walidacja JS w ES6 oraz redirect do logowania z komunikatem (KAN-43) | `public/views/auth/register.html.php`, `public/js/auth-register.js`, `public/views/auth/login.html.php`, `AGENTS.md` | 9, 14, 16, 20 |
