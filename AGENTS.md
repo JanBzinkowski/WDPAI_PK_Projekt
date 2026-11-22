@@ -106,7 +106,9 @@ my-app/
         ├── View.php              # App\Core\View: silnik szablonów *.html.php z obsługą layoutów i partiali
         ├── helpers.php           # globalny helper escapowania e() (htmlspecialchars ENT_QUOTES UTF-8)
         ├── Middleware/           # App\Core\Middleware: MiddlewareInterface
-        │   └── MiddlewareInterface.php
+        │   ├── AuthMiddleware.php # Weryfikacja uwierzytelnienia (401 / redirect)
+        │   ├── MiddlewareInterface.php
+        │   └── RoleMiddleware.php # Weryfikacja ról RBAC (403 Forbidden)
         └── Http/                 # App\Core\Http: Request, Response, JsonResponse, RedirectResponse
             ├── JsonResponse.php
             ├── RedirectResponse.php
@@ -245,10 +247,10 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 19 | WCAG + raport (Lighthouse/axe/WAVE) w README | ⬜ | |
 | 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ✅ | password_verify, password_needs_rehash, bezpieczny komunikat błędu, rate limiting |
 | 21 | Sesja (regeneracja ID, flagi cookie) | ✅ | App\Core\Session (HttpOnly, SameSite=Lax, Secure w prod, idle timeout, flash messages) |
-| 22 | Uprawnienia (backend, 401/403) | ⬜ | |
-| 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
+| 22 | Uprawnienia (backend, 401/403) | ✅ | AuthMiddleware (401 / redirect), RoleMiddleware (403), DeckPolicy (autoryzacja zasobów) |
+| 23 | Role (≥2, np. USER/ADMIN) | ✅ | Enum Role::USER i Role::ADMIN, RoleMiddleware, polityki autoryzacji zasobów |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ✅ | AuthController::logout, unieważnienie sesji i ciasteczka, CSRF |
-| 25 | Widok / trigger / funkcja / transakcja | 🟨 | Widok SQL v_user_stats (agregacja statystyk Leitnera i profilu) |
+| 25 | Widok / trigger / funkcja / transakcja | ✅ | Widok SQL v_user_stats, triggery updated_at oraz flashcard_count, funkcja leitner_interval |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
 | 28 | Brak replikacji kodu | 🟨 | |
@@ -295,3 +297,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 |
 | 22-11-2026 | Bezpieczny menedżer sesji App\Core\Session (flagi cookies, regeneracja ID, timeout bezczynności, flash messages) i testy (KAN-39) | `src/core/Session.php`, `src/core/Bootstrap.php`, `src/controllers/AppController.php`, `src/controllers/AuthController.php`, `tests/Unit/SessionTest.php`, `AGENTS.md` | 21 | Antigravity |
 | 22-11-2026 | Implementacja bezpiecznego wylogowania AuthController::logout (unieważnienie sesji i cookie), CSRF i testy (KAN-40) | `src/controllers/AuthController.php`, `src/core/CsrfToken.php`, `public/views/partials/nav.html.php`, `tests/Unit/LogoutTest.php`, `AGENTS.md` | 24 | Antigravity |
+| 22-11-2026 | Middleware autoryzacji AuthMiddleware i RoleMiddleware (401/403), polityka uprawnień DeckPolicy i testy (KAN-41) | `src/core/Middleware/AuthMiddleware.php`, `src/core/Middleware/RoleMiddleware.php`, `src/services/Policies/DeckPolicy.php`, `tests/Unit/AuthorizationTest.php`, `AGENTS.md` | 22, 23 | Antigravity |
