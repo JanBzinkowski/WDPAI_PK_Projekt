@@ -35,6 +35,13 @@ final class Bootstrap
         $translator = new Translator('pl');
         $container->instance(Translator::class, $translator);
 
+        $userRepository = new \App\Repository\PgUserRepository($database);
+        $container->instance(\App\Repository\UserRepositoryInterface::class, $userRepository);
+        $container->instance(\App\Repository\PgUserRepository::class, $userRepository);
+
+        $authService = new \App\Service\AuthService($userRepository, $translator);
+        $container->instance(\App\Service\AuthService::class, $authService);
+
         $errorHandler = new ErrorHandler($config);
         $errorHandler->register();
         $container->instance(ErrorHandler::class, $errorHandler);
@@ -53,6 +60,10 @@ final class Bootstrap
         $this->router->get('/', DefaultController::class, 'index');
         $this->router->get('/projects', ProjectController::class, 'index');
         $this->router->get('/projects/{id}', ProjectController::class, 'show');
+
+        // Autentykacja
+        $this->router->get('/register', \App\Controller\AuthController::class, 'showRegister');
+        $this->router->post('/register', \App\Controller\AuthController::class, 'register');
     }
 
     public function handle(Request $request): Response
