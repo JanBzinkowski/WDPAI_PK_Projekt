@@ -79,8 +79,15 @@ my-app/
 │   ├── nginx/nginx.conf          # root /app/public, fastcgi -> php:9000
 │   └── php/Dockerfile            # php:8.3-fpm-alpine + pdo_pgsql, gd, zip, opcache, composer + instalacja zależności
 ├── public/                       # document root
+│   ├── css/
+│   │   └── main.css              # style aplikacji, zmienne motywów dark/light, formularze, karty, mobile-first
+│   ├── js/
+│   │   ├── auth-login.js         # walidacja formularza logowania w ES6
+│   │   └── main.js               # główny moduł JS aplikacji (motyw, alerty)
 │   ├── index.php                 # punkt wejścia: vendor/autoload.php + rejestracja tras + dispatch
 │   └── views/
+│       ├── auth/
+│       │   └── login.html.php    # widok logowania mobile zgodny z Figma
 │       ├── home.html.php
 │       ├── layout.html.php       # główny layout z partialami (header, nav, footer) i anty-FOUC
 │       ├── not-found.html.php
@@ -234,16 +241,16 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 6 | ERD Mermaid w README | ✅ | Diagram ERD Mermaid w README.md (relacje 3NF, klucze, atrybuty) |
 | 7 | Git (małe commity, merge do main) | ✅ | workflow gałęzi i konwencja commitów w README.md i AGENTS.md |
 | 8 | Realizacja tematu (pełny proces, demo) | ⬜ | |
-| 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | ⬜ | |
+| 9 | HTML semantyczny, wspólne partiale, formularze z etykietami | 🟨 | formularz logowania (views/auth/login.html.php) z etykietami, autocomplete, layout i partiale |
 | 10 | PostgreSQL (konfiguracja poza kodem, parametryzacja, mapowanie) | 🟨 | App\Core\Database (PDO pgsql z env), App\Repository\BaseRepository (prepared statements, transactions) |
 | 11 | Złożoność bazy (relacje, ograniczenia, normalizacja) | ✅ | 13 tabel w 3NF, CHECK (box 1-5, saldo>=0, cele>0, cena>=0), UNIQUE, indeksy |
 | 12 | Eksport `.sql` | ✅ | database/schema.sql oraz docker/db/01_schema.sql (docker-entrypoint-initdb.d) |
 | 13 | PHP (nowoczesny, typy, obsługa błędów) | 🟨 | PHP 8.3, `strict_types`, Composer PSR-4 autoloader |
-| 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | ⬜ | |
+| 14 | JavaScript (walidacja, zdarzenia, DOM, moduły) | 🟨 | public/js/auth-login.js (walidacja client-side, aria-invalid), public/js/main.js |
 | 15 | Fetch API (GET + POST, JSON, statusy, loading) | ⬜ | |
-| 16 | Design (spójny, CSS w plikach) | ⬜ | |
+| 16 | Design (spójny, CSS w plikach) | 🟨 | public/css/main.css, spójna paleta kolorów, karty, formularze, media queries mobile |
 | 17 | Responsywność (≥5 widoków) | ⬜ | |
-| 18 | Dark/light mode (`data-theme`, localStorage, prefers-color-scheme, anty-FOUC) | ⬜ | |
+| 18 | Dark/light mode (`data-theme`, localStorage, prefers-color-scheme, anty-FOUC) | 🟨 | zmienne CSS data-theme w main.css, anty-FOUC w layout.html.php, przełącznik w main.js |
 | 19 | WCAG + raport (Lighthouse/axe/WAVE) w README | ⬜ | |
 | 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ✅ | password_verify, password_needs_rehash, bezpieczny komunikat błędu, rate limiting |
 | 21 | Sesja (regeneracja ID, flagi cookie) | ✅ | App\Core\Session (HttpOnly, SameSite=Lax, Secure w prod, idle timeout, flash messages) |
@@ -295,6 +302,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 |
 | 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 |
 | 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 |
-| 22-11-2026 | Bezpieczny menedżer sesji App\Core\Session (flagi cookies, regeneracja ID, timeout bezczynności, flash messages) i testy (KAN-39) | `src/core/Session.php`, `src/core/Bootstrap.php`, `src/controllers/AppController.php`, `src/controllers/AuthController.php`, `tests/Unit/SessionTest.php`, `AGENTS.md` | 21 | Antigravity |
-| 22-11-2026 | Implementacja bezpiecznego wylogowania AuthController::logout (unieważnienie sesji i cookie), CSRF i testy (KAN-40) | `src/controllers/AuthController.php`, `src/core/CsrfToken.php`, `public/views/partials/nav.html.php`, `tests/Unit/LogoutTest.php`, `AGENTS.md` | 24 | Antigravity |
-| 22-11-2026 | Middleware autoryzacji AuthMiddleware i RoleMiddleware (401/403), polityka uprawnień DeckPolicy i testy (KAN-41) | `src/core/Middleware/AuthMiddleware.php`, `src/core/Middleware/RoleMiddleware.php`, `src/services/Policies/DeckPolicy.php`, `tests/Unit/AuthorizationTest.php`, `AGENTS.md` | 22, 23 | Antigravity |
+| 22-11-2026 | Bezpieczny menedżer sesji App\Core\Session (flagi cookies, regeneracja ID, timeout bezczynności, flash messages) i testy (KAN-39) | `src/core/Session.php`, `src/core/Bootstrap.php`, `src/controllers/AppController.php`, `src/controllers/AuthController.php`, `tests/Unit/SessionTest.php`, `AGENTS.md` | 21 |
+| 22-11-2026 | Implementacja bezpiecznego wylogowania AuthController::logout (unieważnienie sesji i cookie), CSRF i testy (KAN-40) | `src/controllers/AuthController.php`, `src/core/CsrfToken.php`, `public/views/partials/nav.html.php`, `tests/Unit/LogoutTest.php`, `AGENTS.md` | 24 |
+| 22-11-2026 | Middleware autoryzacji AuthMiddleware i RoleMiddleware (401/403), polityka uprawnień DeckPolicy i testy (KAN-41) | `src/core/Middleware/AuthMiddleware.php`, `src/core/Middleware/RoleMiddleware.php`, `src/services/Policies/DeckPolicy.php`, `tests/Unit/AuthorizationTest.php`, `AGENTS.md` | 22, 23 |
+| 22-11-2026 | Responsywny widok logowania mobile (views/auth/login.html.php), arkusz main.css (motywy, formularze, karty) i walidacja JS (KAN-42) | `public/css/main.css`, `public/views/auth/login.html.php`, `public/js/auth-login.js`, `public/js/main.js`, `AGENTS.md` | 9, 14, 16, 18, 20 |
