@@ -14,10 +14,12 @@ require_once dirname(__DIR__) . '/core/helpers.php';
 abstract class AppController
 {
     protected View $view;
+    protected ?\App\Core\Session $session;
 
-    public function __construct(?View $view = null)
+    public function __construct(?View $view = null, ?\App\Core\Session $session = null)
     {
         $this->view = $view ?? new View();
+        $this->session = $session;
     }
 
     protected function render(
@@ -42,6 +44,11 @@ abstract class AppController
 
     protected function currentUser(): ?object
     {
+        if ($this->session !== null) {
+            $user = $this->session->get('user');
+            return is_object($user) ? $user : null;
+        }
+
         if (session_status() === PHP_SESSION_ACTIVE && isset($_SESSION['user']) && is_object($_SESSION['user'])) {
             return $_SESSION['user'];
         }

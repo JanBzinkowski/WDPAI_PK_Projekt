@@ -13,9 +13,12 @@ final class AuthController extends AppController
 {
     private AuthService $authService;
 
-    public function __construct(?View $view = null, ?AuthService $authService = null)
-    {
-        parent::__construct($view);
+    public function __construct(
+        ?View $view = null,
+        ?AuthService $authService = null,
+        ?\App\Core\Session $session = null
+    ) {
+        parent::__construct($view, $session);
         $this->authService = $authService ?? new AuthService(
             new \App\Repository\PgUserRepository(new \App\Core\Database(\App\Core\Config::fromEnv()))
         );
@@ -43,13 +46,20 @@ final class AuthController extends AppController
 
         $user = $this->authService->authenticate($email, $password, $ip);
 
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
+        if ($this->session !== null) {
+            $this->session->regenerate(true);
+            $this->session->set('user_id', $user->getId());
+            $this->session->set('user', $user);
+            $this->session->set('role', $user->getRole()->value);
+        } else {
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+            session_regenerate_id(true);
+            $_SESSION['user_id'] = $user->getId();
+            $_SESSION['user'] = $user;
+            $_SESSION['role'] = $user->getRole()->value;
         }
-        session_regenerate_id(true);
-        $_SESSION['user_id'] = $user->getId();
-        $_SESSION['user'] = $user;
-        $_SESSION['role'] = $user->getRole()->value;
 
         if ($request->expectsJson() || $request->isJson()) {
             return $this->json([

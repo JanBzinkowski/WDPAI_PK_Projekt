@@ -100,6 +100,7 @@ my-app/
         ├── Database.php          # App\Core\Database: połączenie PDO z env, obsługa transakcji (transactional)
         ├── ErrorHandler.php      # App\Core\ErrorHandler: centralna obsługa wyjątków, mapowanie kodów HTTP 400-500, HTML/JSON
         ├── Router.php            # App\Core\Router: rejestracja tras (GET/POST/PUT/PATCH/DELETE), regex params, middleware pipeline, 404/405
+        ├── Session.php           # App\Core\Session: bezpieczna sesja (HttpOnly, SameSite, regeneration, timeout, flash)
         ├── Translator.php        # App\Core\Translator: obsługa tłumaczeń i18n (PL/EN) z podmianą parametrów
         ├── Validator.php         # App\Core\Validator: backendowy walidator reguł (required, email, min, max, between, in, enum, same)
         ├── View.php              # App\Core\View: silnik szablonów *.html.php z obsługą layoutów i partiali
@@ -241,7 +242,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 18 | Dark/light mode (`data-theme`, localStorage, prefers-color-scheme, anty-FOUC) | ⬜ | |
 | 19 | WCAG + raport (Lighthouse/axe/WAVE) w README | ⬜ | |
 | 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ✅ | password_verify, password_needs_rehash, bezpieczny komunikat błędu, rate limiting |
-| 21 | Sesja (regeneracja ID, flagi cookie) | ⬜ | |
+| 21 | Sesja (regeneracja ID, flagi cookie) | ✅ | App\Core\Session (HttpOnly, SameSite=Lax, Secure w prod, idle timeout, flash messages) |
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
@@ -287,6 +288,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Utworzenie widoku SQL v_user_stats do agregacji statystyk profilu oraz PgUserStatsRepository z testami (KAN-33) | `database/schema.sql`, `docker/db/01_schema.sql`, `src/repositories/UserStatsRepositoryInterface.php`, `src/repositories/PgUserStatsRepository.php`, `tests/Unit/UserStatsRepositoryTest.php`, `AGENTS.md` | 25, 26 |
 | 22-11-2026 | Dodanie triggerów updated_at, licznika fiszek w talii oraz funkcji leitner_interval w PostgreSQL (KAN-34) | `database/schema.sql`, `docker/db/01_schema.sql`, `README.md`, `AGENTS.md` | 25 |
 | 22-11-2026 | Utworzenie klas modeli domenowych i enumów (User, Deck, Flashcard, Progress, Shop, Role, LeitnerBox) z testami (KAN-35) | `src/models/**`, `tests/Unit/ModelTest.php`, `AGENTS.md` | 5, 23 |
-| 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 | Antigravity |
-| 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 | Antigravity |
+| 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 |
+| 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 |
 | 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 | Antigravity |
+| 22-11-2026 | Bezpieczny menedżer sesji App\Core\Session (flagi cookies, regeneracja ID, timeout bezczynności, flash messages) i testy (KAN-39) | `src/core/Session.php`, `src/core/Bootstrap.php`, `src/controllers/AppController.php`, `src/controllers/AuthController.php`, `tests/Unit/SessionTest.php`, `AGENTS.md` | 21 | Antigravity |
