@@ -93,6 +93,29 @@ my-app/
     │   ├── AppController.php     # App\Controller\AppController: abstrakcyjny kontroler bazowy, render()
     │   ├── DefaultController.php # App\Controller\DefaultController: index, notFound
     │   └── ProjectController.php # App\Controller\ProjectController: index, show(int $id)
+    ├── models/                   # App\Model: silnie typowane encje domenowe i enumy
+    │   ├── Enums/                # Role, Visibility, Currency, ItemCategory, LeitnerBox
+    │   │   ├── Currency.php
+    │   │   ├── ItemCategory.php
+    │   │   ├── LeitnerBox.php
+    │   │   ├── Role.php
+    │   │   └── Visibility.php
+    │   ├── CurrencyTransaction.php
+    │   ├── DailyActivity.php
+    │   ├── DailyTest.php
+    │   ├── Deck.php
+    │   ├── Flashcard.php
+    │   ├── FlashcardProgress.php
+    │   ├── ModelInterface.php
+    │   ├── ShopItem.php
+    │   ├── User.php
+    │   ├── UserItem.php
+    │   └── UserSettings.php
+    ├── repositories/             # App\Repository: interfejsy i repozytoria PDO
+    │   ├── BaseRepository.php
+    │   ├── PgUserStatsRepository.php
+    │   ├── RepositoryInterface.php
+    │   └── UserStatsRepositoryInterface.php
     └── core/
         ├── Bootstrap.php         # App\Core\Bootstrap: inicjalizacja kontenera, rejestracja tras, dispatch
         ├── Config.php            # App\Core\Config: final readonly Config, typowane gettery z getenv()
@@ -239,7 +262,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ⬜ | |
 | 21 | Sesja (regeneracja ID, flagi cookie) | ⬜ | |
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
-| 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
+| 23 | Role (≥2, np. USER/ADMIN) | ✅ | Enum Role::USER i Role::ADMIN, pole role w users, autoryzacja |
 | 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
 | 25 | Widok / trigger / funkcja / transakcja | ✅ | Widok v_user_stats, triggery updated_at oraz flashcard_count, funkcja leitner_interval |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
@@ -282,3 +305,4 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21-11-2026 | Utworzenie fizycznego schematu bazy database/schema.sql i docker/db/01_schema.sql z ograniczeniami CHECK, FK ON DELETE, UNIQUE i indeksami (KAN-32) | `database/schema.sql`, `docker/db/01_schema.sql`, `AGENTS.md` | 11, 12, 26 | Antigravity |
 | 22-11-2026 | Utworzenie widoku SQL v_user_stats do agregacji statystyk profilu oraz PgUserStatsRepository z testami (KAN-33) | `database/schema.sql`, `docker/db/01_schema.sql`, `src/repositories/UserStatsRepositoryInterface.php`, `src/repositories/PgUserStatsRepository.php`, `tests/Unit/UserStatsRepositoryTest.php`, `AGENTS.md` | 25, 26 | Antigravity |
 | 22-11-2026 | Dodanie triggerów updated_at, licznika fiszek w talii oraz funkcji leitner_interval w PostgreSQL (KAN-34) | `database/schema.sql`, `docker/db/01_schema.sql`, `README.md`, `AGENTS.md` | 25 | Antigravity |
+| 22-11-2026 | Utworzenie klas modeli domenowych i enumów (User, Deck, Flashcard, Progress, Shop, Role, LeitnerBox) z testami (KAN-35) | `src/models/**`, `tests/Unit/ModelTest.php`, `AGENTS.md` | 5, 23 | Antigravity |
