@@ -68,6 +68,8 @@ final class Bootstrap
         // Autentykacja
         $this->router->get('/login', \App\Controller\AuthController::class, 'showLogin');
         $this->router->post('/login', \App\Controller\AuthController::class, 'login');
+        $this->router->post('/logout', \App\Controller\AuthController::class, 'logout');
+        $this->router->get('/logout', \App\Controller\AuthController::class, 'logout');
         $this->router->get('/register', \App\Controller\AuthController::class, 'showRegister');
         $this->router->post('/register', \App\Controller\AuthController::class, 'register');
     }

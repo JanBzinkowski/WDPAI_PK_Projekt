@@ -73,6 +73,39 @@ final class AuthController extends AppController
         return $this->redirect($returnUrl !== '' ? $returnUrl : '/');
     }
 
+    public function logout(Request $request): Response
+    {
+        if ($this->session !== null) {
+            $this->session->destroy();
+        } else {
+            $_SESSION = [];
+            if (ini_get('session.use_cookies') && !headers_sent()) {
+                $params = session_get_cookie_params();
+                setcookie(
+                    session_name(),
+                    '',
+                    time() - 42000,
+                    $params['path'],
+                    $params['domain'],
+                    $params['secure'],
+                    $params['httponly']
+                );
+            }
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                session_destroy();
+            }
+        }
+
+        if ($request->expectsJson() || $request->isJson()) {
+            return $this->json([
+                'success' => true,
+                'message' => 'Wylogowano pomyślnie.',
+            ]);
+        }
+
+        return $this->redirect('/login?logged_out=1');
+    }
+
     public function register(Request $request): Response
     {
         $body = $request->getBody();

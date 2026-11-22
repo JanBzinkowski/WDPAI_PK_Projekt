@@ -130,6 +130,8 @@ Docelowe katalogi (tworzyć zgodnie z tym układem):
 | POST   | `/register`      | AuthController::register      | statyczna           | walidacja i rejestracja (HTML/JSON) |
 | GET    | `/login`         | AuthController::showLogin     | statyczna           | formularz logowania |
 | POST   | `/login`         | AuthController::login         | statyczna           | weryfikacja hasła, rate limiting, sesja |
+| POST   | `/logout`        | AuthController::logout        | statyczna           | unieważnienie sesji i ciasteczka |
+| GET    | `/logout`        | AuthController::logout        | statyczna           | wylogowanie z przekierowaniem do /login |
 | *      | brak dopasowania | DefaultController::notFound   | fallback            | HTTP 404 |
 
 ## 5. Uruchomienie
@@ -245,7 +247,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 21 | Sesja (regeneracja ID, flagi cookie) | ✅ | App\Core\Session (HttpOnly, SameSite=Lax, Secure w prod, idle timeout, flash messages) |
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
-| 24 | Wylogowanie (unieważnienie sesji i cookie) | ⬜ | |
+| 24 | Wylogowanie (unieważnienie sesji i cookie) | ✅ | AuthController::logout, unieważnienie sesji i ciasteczka, CSRF |
 | 25 | Widok / trigger / funkcja / transakcja | 🟨 | Widok SQL v_user_stats (agregacja statystyk Leitnera i profilu) |
 | 26 | JOIN + przemyślane ON DELETE/ON UPDATE | ✅ | ON DELETE CASCADE dla relacji decks/cards/progress/settings, RESTRICT dla user_items, SET NULL dla logs |
 | 27 | Security Bingo + tabela w README | ⬜ | |
@@ -290,5 +292,6 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Utworzenie klas modeli domenowych i enumów (User, Deck, Flashcard, Progress, Shop, Role, LeitnerBox) z testami (KAN-35) | `src/models/**`, `tests/Unit/ModelTest.php`, `AGENTS.md` | 5, 23 |
 | 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 |
 | 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 |
-| 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 | Antigravity |
+| 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 |
 | 22-11-2026 | Bezpieczny menedżer sesji App\Core\Session (flagi cookies, regeneracja ID, timeout bezczynności, flash messages) i testy (KAN-39) | `src/core/Session.php`, `src/core/Bootstrap.php`, `src/controllers/AppController.php`, `src/controllers/AuthController.php`, `tests/Unit/SessionTest.php`, `AGENTS.md` | 21 | Antigravity |
+| 22-11-2026 | Implementacja bezpiecznego wylogowania AuthController::logout (unieważnienie sesji i cookie), CSRF i testy (KAN-40) | `src/controllers/AuthController.php`, `src/core/CsrfToken.php`, `public/views/partials/nav.html.php`, `tests/Unit/LogoutTest.php`, `AGENTS.md` | 24 | Antigravity |
