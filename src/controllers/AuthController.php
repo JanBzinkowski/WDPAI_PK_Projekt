@@ -28,6 +28,41 @@ final class AuthController extends AppController
         ]);
     }
 
+    public function showLogin(): Response
+    {
+        return $this->render('auth/login', [
+            'pageTitle' => 'Logowanie - Flashcards Leitner',
+        ]);
+    }
+
+    public function login(Request $request): Response
+    {
+        $email = (string) $request->getBody('email', '');
+        $password = (string) $request->getBody('password', '');
+        $ip = (string) ($request->getServer('REMOTE_ADDR') ?? '127.0.0.1');
+
+        $user = $this->authService->authenticate($email, $password, $ip);
+
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        session_regenerate_id(true);
+        $_SESSION['user_id'] = $user->getId();
+        $_SESSION['user'] = $user;
+        $_SESSION['role'] = $user->getRole()->value;
+
+        if ($request->expectsJson() || $request->isJson()) {
+            return $this->json([
+                'success' => true,
+                'message' => 'Zalogowano pomyślnie.',
+                'user' => $user->toArray(),
+            ]);
+        }
+
+        $returnUrl = (string) $request->getQuery('return_url', '/');
+        return $this->redirect($returnUrl !== '' ? $returnUrl : '/');
+    }
+
     public function register(Request $request): Response
     {
         $body = $request->getBody();

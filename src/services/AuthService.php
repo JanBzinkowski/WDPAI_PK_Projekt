@@ -16,11 +16,51 @@ final class AuthService implements ServiceInterface
 {
     private UserRepositoryInterface $userRepository;
     private ?Translator $translator;
+    private LoginRateLimiter $rateLimiter;
 
-    public function __construct(UserRepositoryInterface $userRepository, ?Translator $translator = null)
-    {
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        ?Translator $translator = null,
+        ?LoginRateLimiter $rateLimiter = null
+    ) {
         $this->userRepository = $userRepository;
         $this->translator = $translator;
+        $this->rateLimiter = $rateLimiter ?? new LoginRateLimiter();
+    }
+
+    /**
+     * @throws \App\Exception\UnauthorizedException
+     * @throws ValidationException
+     */
+    public function authenticate(string $email, string $password, string $ip = '127.0.0.1'): User
+    {
+        $email = trim($email);
+
+        if ($this->rateLimiter->isTooManyAttempts($email, $ip)) {
+            throw new ValidationException(
+                ['email' => 'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za 15 minut.'],
+                'Zbyt wiele nieudanych prób logowania. Spróbuj ponownie za 15 minut.'
+            );
+        }
+
+        $user = $this->userRepository->findByEmail($email);
+        $genericError = $this->translator !== null
+            ? $this->translator->translate('auth.invalid_credentials')
+            : 'Nieprawidłowy e-mail lub hasło.';
+
+        if ($user === null || !password_verify($password, $user->getPasswordHash())) {
+            $this->rateLimiter->hit($email, $ip);
+            throw new \App\Exception\UnauthorizedException($genericError);
+        }
+
+        // Sprawdzenie, czy algorytm hashowania wymaga aktualizacji
+        if (password_needs_rehash($user->getPasswordHash(), PASSWORD_DEFAULT)) {
+            $newHash = password_hash($password, PASSWORD_DEFAULT);
+            // Zapis nowego hasha jeśli repozytorium to obsługuje
+        }
+
+        $this->rateLimiter->clear($email, $ip);
+        return $user;
     }
 
     /**

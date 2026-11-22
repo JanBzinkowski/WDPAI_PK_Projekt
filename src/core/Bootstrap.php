@@ -62,6 +62,8 @@ final class Bootstrap
         $this->router->get('/projects/{id}', ProjectController::class, 'show');
 
         // Autentykacja
+        $this->router->get('/login', \App\Controller\AuthController::class, 'showLogin');
+        $this->router->post('/login', \App\Controller\AuthController::class, 'login');
         $this->router->get('/register', \App\Controller\AuthController::class, 'showRegister');
         $this->router->post('/register', \App\Controller\AuthController::class, 'register');
     }

@@ -127,6 +127,8 @@ Docelowe katalogi (tworzyć zgodnie z tym układem):
 | GET    | `/projects/{id}` | ProjectController::show       | path param (`\d+`)  | TODO 404 gdy brak rekordu |
 | GET    | `/register`      | AuthController::showRegister  | statyczna           | formularz rejestracji |
 | POST   | `/register`      | AuthController::register      | statyczna           | walidacja i rejestracja (HTML/JSON) |
+| GET    | `/login`         | AuthController::showLogin     | statyczna           | formularz logowania |
+| POST   | `/login`         | AuthController::login         | statyczna           | weryfikacja hasła, rate limiting, sesja |
 | *      | brak dopasowania | DefaultController::notFound   | fallback            | HTTP 404 |
 
 ## 5. Uruchomienie
@@ -238,7 +240,7 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 17 | Responsywność (≥5 widoków) | ⬜ | |
 | 18 | Dark/light mode (`data-theme`, localStorage, prefers-color-scheme, anty-FOUC) | ⬜ | |
 | 19 | WCAG + raport (Lighthouse/axe/WAVE) w README | ⬜ | |
-| 20 | Logowanie (hash, bezpieczny komunikat, redirect) | 🟨 | password_hash(PASSWORD_DEFAULT) w rejestracji (AuthService) |
+| 20 | Logowanie (hash, bezpieczny komunikat, redirect) | ✅ | password_verify, password_needs_rehash, bezpieczny komunikat błędu, rate limiting |
 | 21 | Sesja (regeneracja ID, flagi cookie) | ⬜ | |
 | 22 | Uprawnienia (backend, 401/403) | ⬜ | |
 | 23 | Role (≥2, np. USER/ADMIN) | ⬜ | |
@@ -286,4 +288,5 @@ Status: ⬜ brak · 🟨 częściowo · ✅ zrobione
 | 22-11-2026 | Dodanie triggerów updated_at, licznika fiszek w talii oraz funkcji leitner_interval w PostgreSQL (KAN-34) | `database/schema.sql`, `docker/db/01_schema.sql`, `README.md`, `AGENTS.md` | 25 |
 | 22-11-2026 | Utworzenie klas modeli domenowych i enumów (User, Deck, Flashcard, Progress, Shop, Role, LeitnerBox) z testami (KAN-35) | `src/models/**`, `tests/Unit/ModelTest.php`, `AGENTS.md` | 5, 23 |
 | 22-11-2026 | Przygotowanie danych demonstracyjnych seed.sql i pełnego eksportu bazy database/dump.sql oraz opis kont demo (KAN-36) | `database/seed.sql`, `docker/db/02_seed.sql`, `database/dump.sql`, `README.md`, `AGENTS.md` | 1, 12 | Antigravity |
-| 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 |
+| 22-11-2026 | Implementacja PgUserRepository oraz serwisu AuthService (rejestracja z hashowaniem hasła, domyślna rola USER, settings i testy) (KAN-37) | `src/repositories/UserRepositoryInterface.php`, `src/repositories/PgUserRepository.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `tests/Unit/AuthServiceTest.php`, `AGENTS.md` | 20, 23 | Antigravity |
+| 22-11-2026 | Implementacja backendu logowania (password_verify, ochrona przed brute-force LoginRateLimiter, bezpieczny komunikat, redirect i testy) (KAN-38) | `src/services/LoginRateLimiter.php`, `src/services/AuthService.php`, `src/controllers/AuthController.php`, `src/core/Bootstrap.php`, `tests/Unit/LoginTest.php`, `AGENTS.md` | 20 | Antigravity |
